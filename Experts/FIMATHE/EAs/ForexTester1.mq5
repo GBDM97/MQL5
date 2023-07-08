@@ -33,7 +33,7 @@ void OnDeinit(const int reason)
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick()
-  {
+  { 
    if(i< 10010)
    {
       i++;
