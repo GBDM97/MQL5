@@ -1,5 +1,12 @@
 #include <Trade/Trade.mqh>
+#include "Utils/LastClosePrice.mqh"
+#include "RiskManager.mqh"
+#include "GetEntryPoint.mqh"
+
 CTrade trade;
+LastClosePrice lastClosePrice;
+RiskManager riskManager;
+GetEntryPoint getEntryPoint;
 
 class FimatheForexOperation {
 public:
@@ -16,8 +23,8 @@ void FimatheForexOperation::Update(bool levelToLevelSurf) {
             ManageTrailingStop();
         }else{return;}
     }else{
-        EntryPoints[0] == -1;
-        EntryPoints[1] == -1;
+        EntryPoints[0] = -1;
+        EntryPoints[1] = -1;
         CheckWhereToOpenNextOrder(levelToLevelSurf);
     }
 }
@@ -27,21 +34,27 @@ void FimatheForexOperation::ManageTrailingStop(void) {
 }
 
 void FimatheForexOperation::CheckWhereToOpenNextOrder(bool levelToLevelSurf) {
-    if(EntryPoints[0] == -1 && EntryPoints[1] == -1) 
+    
+    if(riskManager.AuthorizeOperations() == false)
     {
-        EntryPoints[0] = GetEntryPoint.Above();
-        EntryPoints[1] = GetEntryPoint.Bellow();
+        return;
     }
 
-    if(LastClosePrice.M15() > EntryPoints[0])
+    if(EntryPoints[0] == -1 && EntryPoints[1] == -1) 
+    {
+        EntryPoints[0] = getEntryPoint.Above();
+        EntryPoints[1] = getEntryPoint.Bellow();
+    }
+
+    if(lastClosePrice.M15() > EntryPoints[0])
     {
         trade.Buy(0.01,NULL,0.0,0.0,0.0,NULL);
     }
 
-    if(LastClosePrice.M15() < EntryPoints[1])
-    {
+    if(lastClosePrice.M15() < EntryPoints[1])
+      {
         trade.Sell(0.01,NULL,0.0,0.0,0.0,NULL);
-    }
+      }
     
 }
 

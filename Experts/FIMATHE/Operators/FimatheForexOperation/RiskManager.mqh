@@ -5,5 +5,5 @@ public:
 };
 
 bool RiskManager::AuthorizeOperations(void) {
-    
+    return true;
 }
