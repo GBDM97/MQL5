@@ -1,5 +1,4 @@
-#include "MacroChannel.mqh"
-MacroChannel macroChannel;
+#include "MacroChannel.mqh";
 
 class MicroChannel {
 public:

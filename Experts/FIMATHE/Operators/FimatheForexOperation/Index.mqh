@@ -1,5 +1,6 @@
 #include <Trade/Trade.mqh>
 #include "Utils/LastClosePrice.mqh"
+#include "Utils/TodayIsTheFirstWeekDay"
 #include "RiskManager.mqh"
 #include "GetEntryPoint.mqh"
 #include "MicroChannel.mqh"
@@ -9,6 +10,7 @@ LastClosePrice lastClosePriceClass;
 RiskManager riskManager;
 GetEntryPoint getEntryPoint;
 MicroChannel microChannel;
+TodayIsTheFirstWeekDay todayIsTheFirstWeekDay;
 
 class FimatheForexOperation {
 protected:
@@ -36,8 +38,7 @@ void FimatheForexOperation::Update(double volume,TakeProfitType takeProfitType,d
             ManageTrailingStop();//todo
         }else{return;}
     }else{
-        EntryPoints[0] = -1;
-        EntryPoints[1] = -1;
+
         CheckWhereToOpenNextOrder(volume,takeProfitType,stopLossMultiplier,macroInitRef1,macroInitRef2,channelDivider);
     }
 }
@@ -47,17 +48,20 @@ void FimatheForexOperation::ManageTrailingStop(void) {
 }
 
 void FimatheForexOperation::CheckWhereToOpenNextOrder(double volume,TakeProfitType takeProfitType,double stopLossMultiplier,double macroInitRef1,double macroInitRef2,double channelDivider) {
-    double lastClosePrice = lastClosePriceClass.M15();
     if(riskManager.AuthorizeOperations() == false)//todo
     {
         return;
     }
+    double lastClosePrice = lastClosePriceClass.M15();
 
+    if(todayIsTheFirstWeekDay.Verify())
+    {
+        microChannelSize = microChannel.GetSize(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider);//todo
+    }
     if(EntryPoints[0] == -1 && EntryPoints[1] == -1) 
     {
         EntryPoints[0] = getEntryPoint.Above();//todo
         EntryPoints[1] = getEntryPoint.Bellow();//todo
-        microChannelSize = microChannel.GetSize(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider);//todo
     }
 
     if(lastClosePrice > EntryPoints[0])//todo this logic is wrong
