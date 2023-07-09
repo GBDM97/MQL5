@@ -5,9 +5,9 @@ public:
 };
 
 double GetEntryPoint::Above(void) {
-    return 0.0;
+    return 0.0;//todo
 }
 
 double GetEntryPoint::Bellow(void) {
-    return 0.0;
+    return 0.0;//todo
 }

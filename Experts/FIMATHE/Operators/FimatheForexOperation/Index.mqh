@@ -10,22 +10,23 @@ GetEntryPoint getEntryPoint;
 
 class FimatheForexOperation {
 public:
-    void Update(bool levelToLevelSurf);
+    void Update(bool takeProfitType);
+protected:
     void ManageTrailingStop(void);
-    void CheckWhereToOpenNextOrder(bool levelToLevelSurf);
+    void CheckWhereToOpenNextOrder(bool takeProfitType);
     double EntryPoints[2];
 };
 
-void FimatheForexOperation::Update(bool levelToLevelSurf) {
+void FimatheForexOperation::Update(bool takeProfitType,double volume,double stopLossMultiplier) {
     if(PositionsTotal()) 
     {
-        if(levelToLevelSurf){
+        if(takeProfitType == "surf"){
             ManageTrailingStop();
         }else{return;}
     }else{
         EntryPoints[0] = -1;
         EntryPoints[1] = -1;
-        CheckWhereToOpenNextOrder(levelToLevelSurf);
+        CheckWhereToOpenNextOrder(takeProfitType,volume,stopLossMultiplier);
     }
 }
 
@@ -33,7 +34,7 @@ void FimatheForexOperation::ManageTrailingStop(void) {
     
 }
 
-void FimatheForexOperation::CheckWhereToOpenNextOrder(bool levelToLevelSurf) {
+void FimatheForexOperation::CheckWhereToOpenNextOrder(bool takeProfitType,double volume,double stopLossMultiplier) {
     
     if(riskManager.AuthorizeOperations() == false)
     {
@@ -44,16 +45,18 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder(bool levelToLevelSurf) {
     {
         EntryPoints[0] = getEntryPoint.Above();
         EntryPoints[1] = getEntryPoint.Bellow();
+        microChannelSize = microChannel.GetSize();
     }
 
     if(lastClosePrice.M15() > EntryPoints[0])
     {
-        trade.Buy(0.01,NULL,0.0,0.0,0.0,NULL);
+        trade.Buy(volume,Symbol(),0.0,microChannelSize*-stopLossMultiplier,
+        (takeProfitType=="surf" ? 0.0 : microChannelSize*StringToInteger(takeProfitType)),NULL); //todo
     }
-
     if(lastClosePrice.M15() < EntryPoints[1])
       {
-        trade.Sell(0.01,NULL,0.0,0.0,0.0,NULL);
+        trade.Sell(volume,Symbol(),0.0,microChannelSize*stopLossMultiplier,
+        (takeProfitType=="surf" ? 0.0 : microChannelSize*-StringToInteger(takeProfitType)),NULL); //todo
       }
     
 }
