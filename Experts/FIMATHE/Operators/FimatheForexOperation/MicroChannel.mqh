@@ -87,6 +87,14 @@ double MicroChannel::GetSize(double macroInitRef1,double macroInitRef2,double la
         if(MathAbs((midValue)-out2[i]) < leastDiff)
         {microChannelRef2 = out2[i]}//finds the real price near the midvalue
     }
+    
+    if(microChannelRef1 < microChannelRef2)
+    {
+        double v = microChannelRef1;
+        microChannelRef1 = microChannelRef2;
+        microChannelRef2 = v;
+    }
 
+    return microChannelRef1-macroInitRef2;
 }
-    return 0.0; //todo
+    
