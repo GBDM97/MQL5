@@ -95,6 +95,6 @@ double MicroChannel::GetSize(double macroInitRef1,double macroInitRef2,double la
         microChannelRef2 = v;
     }
 
-    return microChannelRef1-macroInitRef2;
+    return microChannelRef1-microChannelRef2;
 }
     
