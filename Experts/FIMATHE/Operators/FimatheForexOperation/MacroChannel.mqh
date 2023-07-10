@@ -1,10 +1,6 @@
 class MacroChannel {
-protected:
-    string GetCurrent(double macroRef1,double macroInitRef2,double lastClosePrice);
 public:
-    double GetRef1(double macroRef1,double macroInitRef2,double lastClosePrice);
-    double GetRef2(double macroRef1,double macroInitRef2,double lastClosePrice);
-
+    string GetCurrent(double macroRef1,double macroInitRef2,double lastClosePrice);
 };
 
 string MacroChannel::GetCurrent(double macroRef1,double macroRef2,double close) {
@@ -29,21 +25,6 @@ string MacroChannel::GetCurrent(double macroRef1,double macroRef2,double close) 
         return DoubleToString(macroRef1)+"|"+DoubleToString(macroRef2);
     }
     return NULL;
-}
-
-double MacroChannel::GetRef1(double macroRef1,double macroRef2,double close) {
-    string refstr = GetCurrent(macroRef1,macroRef2,close);
-    string outputArray[2];
-    StringSplit(refstr,124,outputArray);
-    return StringToDouble(outputArray[0]);
-
-}
-
-double MacroChannel::GetRef2(double macroRef1,double macroRef2,double close) {
-    string refstr = GetCurrent(macroRef1,macroRef2,close);
-    string outputArray[2];
-    StringSplit(refstr,124,outputArray);
-    return StringToDouble(outputArray[1]);
 }
 
 

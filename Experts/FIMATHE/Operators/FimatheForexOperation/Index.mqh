@@ -1,6 +1,6 @@
 #include <Trade/Trade.mqh>
 #include "Utils/LastClosePrice.mqh"
-#include "Utils/TodayIsTheFirstWeekDay"
+#include "Utils/TodayIsTheFirstWeekDay.mqh"
 #include "RiskManager.mqh"
 #include "GetEntryPoint.mqh"
 #include "MicroChannel.mqh"
@@ -15,7 +15,9 @@ TodayIsTheFirstWeekDay todayIsTheFirstWeekDay;
 class FimatheForexOperation {
 protected:
     double EntryPoints[2];
+    double microChannelRefs[];
     double microChannelSize;
+    string outArray[];
     enum TakeProfitType {
         SURF, 
         ONE_LEVEL,
@@ -56,7 +58,10 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder(double volume,TakeProfitTy
 
     if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeCurrent(),11,8) == "06:00:00")
     {
-        microChannelSize = microChannel.GetSize(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider);//todo
+        StringSplit(microChannel.GetRefs(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider),"|",outArray);
+        microChannelRefs[0] = StringToDouble(outArray[0]);
+        microChannelRefs[1] = StringToDouble(outArray[1]);
+        microChannelSize = microChannelRefs[0]-microChannelRefs[1];
     }
     if(EntryPoints[0] == -1 && EntryPoints[1] == -1) 
     {

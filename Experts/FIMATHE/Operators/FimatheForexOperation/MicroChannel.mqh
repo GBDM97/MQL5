@@ -1,20 +1,14 @@
-#include "MacroChannel.mqh";
-
 class MicroChannel {
 public:
-    double GetSize(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
-    double GetRef1(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
-    double GetRef2(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
-protected:
-    double GetCurrent(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
-
+    string GetRefs(double macroRef1,double macroRef2,double lastClosePrice,double channelDivider);
+    string GetCurrent(double microRef1,double microRef2,double close);
 };
 
-double MicroChannel::GetCurrent(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider) {
+string MicroChannel::GetRefs(double macroRef1,double macroRef2,double lastClosePrice,double channelDivider) {
     
-    double maxMicroChannelSize = macroInitRef1-macroInitRef2/(channelDivider-rangeOfCalculation);
-    double minMicroChannelSize = macroInitRef1-macroInitRef2/(channelDivider+rangeOfCalculation);
     double rangeOfCalculation = 1.5;
+    double maxMicroChannelSize = macroRef1-macroRef2/(channelDivider-rangeOfCalculation);
+    double minMicroChannelSize = macroRef1-macroRef2/(channelDivider+rangeOfCalculation);
 
     double out[];
 
@@ -38,31 +32,32 @@ double MicroChannel::GetCurrent(double macroInitRef1,double macroInitRef2,double
     int repeatedClosePrices = 10;
     double leastDiff = out[repeatedClosePrices-1] - out[0];
     double midValue;
-    double indexCorrection = repeatedClosePrices - 1;
+    int indexCorrection = repeatedClosePrices - 1;
     for (int i=1; i<ArraySize(out)-repeatedClosePrices-1; i++)
     {
-      if(out[i+indexCorrection]-out[i]<leastDiff)
-      {
-        leastDiff = out[i+indexCorrection]-out[i];//this gets the least diff of repeatedClosePrices number of prices that are near
-        midValue = (out[i+indexCorrection]+out[i])/2;//gets the selected range mid value
-      }
+        
+        if(out[i+indexCorrection]-out[i]<leastDiff)
+        {
+            leastDiff = out[i+indexCorrection]-out[i];//this gets the least diff of repeatedClosePrices number of prices that are near
+            midValue = (out[i+indexCorrection]+out[i])/2;//gets the selected range mid value
+        }
     }
     leastDiff = MathAbs((midValue)-out[0]);
-    double microChannelRef1;
+    double microRef1;
     for (int i=1; i<ArraySize(out); i++)
     {
         if(MathAbs((midValue)-out[i]) < leastDiff)
-        {microChannelRef1 = out[i]}//finds the real price near the midvalue
+        {microRef1 = out[i];}//finds the real price near the midvalue
     }
 
     double firstRangeTofindSecondRef[];
     double secondRangeTofindSecondRef[];
     double out2[];
-    firstRangeTofindSecondRef[0] = microChannelRef1 + minMicroChannelSize;
-    firstRangeTofindSecondRef[1] = microChannelRef1 + maxMicroChannelSize;
-    secondRangeTofindSecondRef[0] = microChannelRef1 - minMicroChannelSize;
-    secondRangeTofindSecondRef[1] = microChannelRef1 - maxMicroChannelSize;
-    for (int=0; i<ArraySize(out); i++)
+    firstRangeTofindSecondRef[0] = microRef1 + minMicroChannelSize;
+    firstRangeTofindSecondRef[1] = microRef1 + maxMicroChannelSize;
+    secondRangeTofindSecondRef[0] = microRef1 - minMicroChannelSize;
+    secondRangeTofindSecondRef[1] = microRef1 - maxMicroChannelSize;
+    for (int i=0; i<ArraySize(out); i++)
     {
         if(out[i] >= firstRangeTofindSecondRef[0] && out[i] <= firstRangeTofindSecondRef[1]){
             ArrayResize(out2, ArraySize(out2) + 1);
@@ -84,20 +79,45 @@ double MicroChannel::GetCurrent(double macroInitRef1,double macroInitRef2,double
       }
     }
     leastDiff = MathAbs((midValue)-out2[0]);
-    double microChannelRef2;
+    double microRef2;
     for (int i=1; i<ArraySize(out2); i++)
     {
         if(MathAbs((midValue)-out2[i]) < leastDiff)
-        {microChannelRef2 = out2[i]}//finds the real price near the midvalue
+        {microRef2 = out2[i];}//finds the real price near the midvalue
     }
     
-    if(microChannelRef1 < microChannelRef2)
+    if(microRef1 < microRef2)
     {
-        double v = microChannelRef1;
-        microChannelRef1 = microChannelRef2;
-        microChannelRef2 = v;
+        double v = microRef1;
+        microRef1 = microRef2;
+        microRef2 = v;
     }
 
-    return microChannelRef1-microChannelRef2;
+    return GetCurrent(microRef1,microRef2,lastClosePrice);
+}
+
+string MicroChannel::GetCurrent(double microRef1,double microRef2,double close) {
+
+    double channelSize = microRef1-microRef2;
+    
+    if(microRef1 > close && microRef2 < close)
+    {return DoubleToString(microRef1)+"|"+DoubleToString(microRef2);}
+
+    if(microRef1 < close)
+    {
+        while (microRef1 < close)
+        {microRef1 += channelSize;}
+        microRef2 = microRef1 - channelSize;
+        return DoubleToString(microRef1)+"|"+DoubleToString(microRef2);
+    }
+
+    if(microRef2 > close)
+    {
+        while (microRef2 > close)
+        {microRef2 -= channelSize;}
+        microRef1 = microRef2 + channelSize;
+        return DoubleToString(microRef1)+"|"+DoubleToString(microRef2);
+    }
+    return NULL;
 }
     
