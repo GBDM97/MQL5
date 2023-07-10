@@ -54,7 +54,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder(double volume,TakeProfitTy
     }
     double lastClosePrice = lastClosePriceClass.M15();
 
-    if(todayIsTheFirstWeekDay.Verify())
+    if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeCurrent(),11,8) == "06:00:00")
     {
         microChannelSize = microChannel.GetSize(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider);//todo
     }

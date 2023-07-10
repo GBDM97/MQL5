@@ -14,7 +14,7 @@ input enum takeProfitType = SURF;
 input double stopLossMultiplier = 2.25;
 input double macroInitRef1;
 input double macroInitRef2;
-input double channelDivider = 8;
+input double channelDivider = 8.5;
 
 int OnInit()
   {
