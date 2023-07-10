@@ -3,11 +3,14 @@
 class MicroChannel {
 public:
     double GetSize(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
+    double GetRef1(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
+    double GetRef2(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
 protected:
-    double rangeOfCalculation;
+    double GetCurrent(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
+
 };
 
-double MicroChannel::GetSize(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider) {
+double MicroChannel::GetCurrent(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider) {
     
     double maxMicroChannelSize = macroInitRef1-macroInitRef2/(channelDivider-rangeOfCalculation);
     double minMicroChannelSize = macroInitRef1-macroInitRef2/(channelDivider+rangeOfCalculation);
