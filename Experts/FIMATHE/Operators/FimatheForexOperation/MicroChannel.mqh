@@ -33,21 +33,22 @@ double MicroChannel::GetSize(double macroInitRef1,double macroInitRef2,double la
     }
     ArraySort(out);//sorted array with all prices between 0 to 6 oclock
     int repeatedClosePrices = 10;
-    double leastDiff1 = out[repeatedClosePrices-1] - out[0];
+    double leastDiff = out[repeatedClosePrices-1] - out[0];
     double midValue;
+    double indexCorrection = repeatedClosePrices - 1;
     for (int i=1; i<ArraySize(out)-repeatedClosePrices-1; i++)
     {
-      if(out[i+9]-out[i]<leastDiff1)
+      if(out[i+indexCorrection]-out[i]<leastDiff)
       {
-        leastDiff1 = out[i+9]-out[i];//this gets the least diff of repeatedClosePrices number of prices that are near
-        midValue = (out[i+9]+out[i])/2;//gets the selected range mid value
+        leastDiff = out[i+indexCorrection]-out[i];//this gets the least diff of repeatedClosePrices number of prices that are near
+        midValue = (out[i+indexCorrection]+out[i])/2;//gets the selected range mid value
       }
     }
-    double leastDiff2 = MathAbs((midValue)-out[0]);
+    leastDiff = MathAbs((midValue)-out[0]);
     double microChannelRef1;
     for (int i=1; i<ArraySize(out); i++)
     {
-        if(MathAbs((midValue)-out[i]) < leastDiff2)
+        if(MathAbs((midValue)-out[i]) < leastDiff)
         {microChannelRef1 = out[i]}//finds the real price near the midvalue
     }
 
@@ -69,7 +70,23 @@ double MicroChannel::GetSize(double macroInitRef1,double macroInitRef2,double la
             out2[ArraySize(out2) - 1] = out[i];//now array out2 has the prices inside the ranges to find the sec microref
         }
     }
-
+    indexCorrection = repeatedClosePrices-1-6;
+    leastDiff = out2[repeatedClosePrices-1-6] - out2[0];
+    for (int i=1; i<ArraySize(out)-repeatedClosePrices-1-6; i++)
+    {
+      if(out2[i+indexCorrection]-out2[i]<leastDiff)
+      {
+        leastDiff = out2[i+indexCorrection]-out2[i];//this gets the least diff of repeatedClosePrices number of prices that are near
+        midValue = (out2[i+indexCorrection]+out2[i])/2;//gets the selected range mid value
+      }
+    }
+    leastDiff = MathAbs((midValue)-out2[0]);
+    double microChannelRef2;
+    for (int i=1; i<ArraySize(out2); i++)
+    {
+        if(MathAbs((midValue)-out2[i]) < leastDiff)
+        {microChannelRef2 = out2[i]}//finds the real price near the midvalue
+    }
 
 }
     return 0.0; //todo
