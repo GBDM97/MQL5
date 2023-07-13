@@ -71,17 +71,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         }
     }
 
-    if(expertAdvisorInfo.entryPoint2 == 0) 
-    {
-        //caso
-    }
-    
-    if(expertAdvisorInfo.entryPoint3 == 0 || macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4)
-    {
-        expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
-    }
-    
-    if(expertAdvisorInfo.entryPoint4 == 0 || macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4) 
+    if(expertAdvisorInfo.entryPoint4 == 0) 
     {
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef2;
         while (expertAdvisorInfo.entryPoint4 > expertAdvisorInfo.macroRef2 - expertAdvisorInfo.microChannelSize*2)
@@ -89,6 +79,31 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
             expertAdvisorInfo.entryPoint4 -= expertAdvisorInfo.microChannelSize;
         }
     }
+
+    if(macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4)//break through above
+    {
+        expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
+        expertAdvisorInfo.entryPoint4 = expertAdvisorInfo.entryPoint2;
+        if (expertAdvisorInfo.recentOperationEntryPoint == "entryPoint2")
+        {
+            expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4";
+        }
+    }
+
+    if(macroRef2+2*macroChannelSize < expertAdvisorInfo.entryPoint1)//break through bellow
+    {
+        expertAdvisorInfo.entryPoint2 = expertAdvisorInfo.entryPoint4;
+        expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.entryPoint3;
+        if (expertAdvisorInfo.recentOperationEntryPoint == "entryPoint3")
+        {
+            expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1";
+        }
+    }
+
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && )
+    
+   
+    
     
 }
 
@@ -101,14 +116,14 @@ void FimatheForexOperation::UpdateMicroChannel(){
 void FimatheForexOperation::WaitForPositionEntryPoint(){
     
     double close = expertAdvisorInfo.GetLastClosePriceM15();
-    if(close > expertAdvisorInfo.entryPoint1)//todo this logic is wrong
+    if(close > expertAdvisorInfo.entryPoint1)//todo this logic is wrong //if PositionsTotal false enter, else do not enter
     {
         trade.Buy(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*-expertAdvisorInfo.stopLossMultiplier,
         (expertAdvisorInfo.takeProfitType==TakeProfitType(0) ? 
         0.0 : expertAdvisorInfo.microChannelSize*TakeProfitTypeToNumber()),NULL);
     }
-    if(close < expertAdvisorInfo.entryPoint1)//todo this logic is wrong
+    if(close < expertAdvisorInfo.entryPoint1)//todo this logic is wrong //if PositionsTotal false enter, else do not enter
       {
         trade.Sell(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*expertAdvisorInfo.stopLossMultiplier,

@@ -18,6 +18,7 @@ public:
   double entryPoint2;
   double entryPoint3;
   double entryPoint4;
+  double recentOperationEntryPoint;
 
   double GetLastClosePriceM15(void);
   void CreateNewMicroChannel(void);
