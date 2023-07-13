@@ -6,7 +6,6 @@ public:
   TakeProfitType takeProfitType;
   double stopLossMultiplier;
   double channelDivider;
-  double midValue;
 
   double macroRef1;
   double macroRef2;
@@ -24,6 +23,9 @@ public:
   void CreateNewMicroChannel(void);
   void UpdateMicroChannel(void);
   void UpdateMacroChannel(void);
+  
+protected:
+  double midValue;
 };
 
 double ExpertAdvisorInfo::GetLastClosePriceM15(void) {
