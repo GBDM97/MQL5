@@ -16,12 +16,14 @@ protected:
     void WaitForPositionEntryPoint(void);
     void UpdateMicroChannel(void);
     ExpertAdvisorInfo expertAdvisorInfo;
+
+    bool recentPosition;
 public:
     void Update(ExpertAdvisorInfo& paramExpertAdvisorInfo);
 };
 
 void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
-    bool recentPosition;
+    
     expertAdvisorInfo = paramExpertAdvisorInfo;
 
     UpdateMicroChannel();
@@ -39,11 +41,13 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
         recentPosition = false;
     }
 
-    if(expertAdvisorInfo.entryPoint1 == -1 || expertAdvisorInfo.entryPoint2 == -1 || expertAdvisorInfo.entryPoint3 == -1 || expertAdvisorInfo.entryPoint4 == -1){
+    if(expertAdvisorInfo.entryPoint1 == -1 || expertAdvisorInfo.entryPoint2 == -1 || 
+    expertAdvisorInfo.entryPoint3 == -1 || expertAdvisorInfo.entryPoint4 == -1){
         CheckWhereToOpenNextOrder();
     }
 
-    if(expertAdvisorInfo.entryPoint1 != -1 || expertAdvisorInfo.entryPoint2 != -1 || expertAdvisorInfo.entryPoint3 != -1 || expertAdvisorInfo.entryPoint4 != -1){
+    if(expertAdvisorInfo.entryPoint1 != -1 || expertAdvisorInfo.entryPoint2 != -1 || 
+    expertAdvisorInfo.entryPoint3 != -1 || expertAdvisorInfo.entryPoint4 != -1){
         WaitForPositionEntryPoint();
     }
 }
@@ -85,7 +89,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
 }
 
 void FimatheForexOperation::UpdateMicroChannel(){
-    if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeCurrent(),11,8) == "06:00:00")
+    if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeToString(TimeCurrent()),11,8) == "06:00:00")
     {expertAdvisorInfo.CreateNewMicroChannel();}
     else{expertAdvisorInfo.UpdateMicroChannel();}
 }
@@ -97,13 +101,15 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
     {
         trade.Buy(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*-expertAdvisorInfo.stopLossMultiplier,
-        (expertAdvisorInfo.takeProfitType==TakeProfitType(0) ? 0.0 : expertAdvisorInfo.microChannelSize*TakeProfitTypeToNumber()),NULL);
+        (expertAdvisorInfo.takeProfitType==TakeProfitType(0) ? 
+        0.0 : expertAdvisorInfo.microChannelSize*TakeProfitTypeToNumber()),NULL);
     }
     if(close < expertAdvisorInfo.entryPoint1)//todo this logic is wrong
       {
         trade.Sell(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*expertAdvisorInfo.stopLossMultiplier,
-        (expertAdvisorInfo.takeProfitType == TakeProfitType(0) ? 0.0 : expertAdvisorInfo.microChannelSize*-TakeProfitTypeToNumber()),NULL);
+        (expertAdvisorInfo.takeProfitType == TakeProfitType(0) ? 
+        0.0 : expertAdvisorInfo.microChannelSize*-TakeProfitTypeToNumber()),NULL);
       }   
 }
 
