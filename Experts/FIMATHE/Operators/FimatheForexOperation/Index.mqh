@@ -61,7 +61,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     {
         return;
     }
-    //todo logic to 50% return, after position opened and get or dont get expertAdvisorInfo.entryPoint
+    
     if(expertAdvisorInfo.entryPoint1 == 0) 
     {
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef1;
@@ -100,7 +100,17 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         }
     }
 
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && )
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
+       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2))
+    {
+        expertAdvisorInfo.UnlockAllEntryPoints();
+    }
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
+       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2))
+    {
+        expertAdvisorInfo.UnlockAllEntryPoints();
+    }
+    
     
    
     

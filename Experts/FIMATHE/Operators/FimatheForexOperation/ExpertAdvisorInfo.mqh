@@ -24,6 +24,7 @@ public:
   void CreateNewMicroChannel(void);
   void UpdateMicroChannel(void);
   void UpdateMacroChannel(void);
+  void UnlockAllEntryPoints(void);
   
 protected:
   double midValue;
@@ -166,5 +167,21 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
         macroRef1 = macroRef2 + macroChannelSize;
     }
 }
+
+void UnlockAllEntryPoints(void) {
+    if(entryPoint1 == -1){
+        entryPoint1 = 0;
+    }
+    if(entryPoint2 == -1){
+        entryPoint2 = 0;
+    }
+    if(entryPoint3 == -3){
+        entryPoint3 = 0;
+    }
+    if(entryPoint4 == -1){
+        entryPoint4 = 0;
+    }
+}
+
 
 
