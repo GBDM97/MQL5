@@ -14,11 +14,6 @@ TodayIsTheFirstWeekDay todayIsTheFirstWeekDay;
 
 class FimatheForexOperation {
 protected:
-    double EntryPoints[2];
-    double microChannelRefs[];
-    double microChannelSize;
-    string outArray[];
-    bool recentPosition;
     enum TakeProfitType {
         SURF, 
         ONE_LEVEL,
@@ -30,12 +25,23 @@ protected:
     void ManageTrailingStop(void);
     void CheckWhereToOpenNextOrder(double volume,TakeProfitType takeProfitType,double stopLossMultiplier,double macroInitRef1,double macroInitRef2,double channelDivider);
     int TakeProfitTypeToNumber(TakeProfitType takeProfitType);
+    void WaitForPositionEntryPoint(double volume,double microChannelSize,TakeProfitType takeProfitType,double stopLossMultiplier,double[] entryPoints);
+    string UpdateMicroChannelInTheBeginningOfTheWeek(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider);
 public:
     void Update(double volume,TakeProfitType takeProfitType,double stopLossMultiplier,double macroInitRef1,double macroInitRef2,double channelDivider);
 };
 
 void FimatheForexOperation::Update(double volume,TakeProfitType takeProfitType,double stopLossMultiplier,double macroInitRef1,double macroInitRef2,double channelDivider) {
-    UpdateMicroChannelInTheBeginningOfTheWeek();
+    double lastClosePrice = lastClosePriceClass.M15();
+    string outArray[];
+    bool recentPosition;
+    double entryPoints[4];
+    double microChannelRefs[];
+
+    StringSplit(UpdateMicroChannelInTheBeginningOfTheWeek(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider),"|",outArray);
+    microChannelRefs[0] = StringToDouble(outArray[0]);
+    microChannelRefs[1] = StringToDouble(outArray[1]);
+    
     if(PositionsTotal()) 
     {
         recentPosition = true;
@@ -43,15 +49,17 @@ void FimatheForexOperation::Update(double volume,TakeProfitType takeProfitType,d
             ManageTrailingStop();//todo
         }else{return;}
     }else if(!PositionsTotal() && recentPosition == true){
-        //todo mark specific EntryPoints undefined
+        //todo mark specific entryPoints undefined
         RiskManager.AnalizeResults(); //todo
         recentPosition = false;
     }
-    if(EntryPoints[0] == -1 || EntryPoints[1] == -1 || EntryPoints[2] == -1 || EntryPoints[3] == -1){
+
+    if(entryPoints[0] == -1 || entryPoints[1] == -1 || entryPoints[2] == -1 || entryPoints[3] == -1){
         CheckWhereToOpenNextOrder(volume,takeProfitType,stopLossMultiplier,macroInitRef1,macroInitRef2,channelDivider);
     }
-    if(EntryPoints[0] != -1 || EntryPoints[1] != -1 || EntryPoints[2] != -1 || EntryPoints[3] != -1){
-        WaitForPositionEntryPoint();
+
+    if(entryPoints[0] != -1 || entryPoints[1] != -1 || entryPoints[2] != -1 || entryPoints[3] != -1){
+        WaitForPositionEntryPoint(volume,microChannelRefs[0]-microChannelRefs[1],takeProfitType,stopLossMultiplier,entryPoints);
     }
 }
 
@@ -59,52 +67,50 @@ void FimatheForexOperation::ManageTrailingStop(void) {
     //todo
 }
 
-void FimatheForexOperation::CheckWhereToOpenNextOrder(double volume,TakeProfitType takeProfitType,double stopLossMultiplier,double macroInitRef1,double macroInitRef2,double channelDivider) {
+void FimatheForexOperation::CheckWhereToOpenNextOrder(double volume,TakeProfitType takeProfitType,double stopLossMultiplier,double macroInitRef1,double macroInitRef2) {
     if(riskManager.AuthorizeOperations() == false)//todo wait for sunday, and other logics
     {
         return;
     }
-    //todo logic to 50% return, after position opened and get or dont get EntryPoints
-    if(EntryPoints[0] == -1) 
+    //todo logic to 50% return, after position opened and get or dont get entryPoints
+    if(entryPoints[0] == -1) 
     {
-        EntryPoints[0] = getEntryPoint.First();//todo
+        entryPoints[0] = getEntryPoint.First();//todo
     }
 
-    if(EntryPoints[1] == -1) 
+    if(entryPoints[1] == -1) 
     {
-        EntryPoints[1] = getEntryPoint.Second();//todo
+        entryPoints[1] = getEntryPoint.Second();//todo
     }
     
-    if(EntryPoints[2] == -1) 
+    if(entryPoints[2] == -1) 
     {
-        EntryPoints[2] = getEntryPoint.Third();//todo
+        entryPoints[2] = getEntryPoint.Third();//todo
     }
     
-    if(EntryPoints[3] == -1) 
+    if(entryPoints[3] == -1) 
     {
-        EntryPoints[3] = getEntryPoint.Fourth();//todo
+        entryPoints[3] = getEntryPoint.Fourth();//todo
     }
     
 }
 
-void FimatheForexOperation::UpdateMicroChannelInTheBeginningOfTheWeek(){ //todo write the correct params, and try to put some as global vars
-    double lastClosePrice = lastClosePriceClass.M15();
+string FimatheForexOperation::UpdateMicroChannelInTheBeginningOfTheWeek(double macroInitRef1,double macroInitRef2,double lastClosePrice,double channelDivider){
     if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeCurrent(),11,8) == "06:00:00")
     {
-        StringSplit(microChannel.GetRefs(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider),"|",outArray);
-        microChannelRefs[0] = StringToDouble(outArray[0]);
-        microChannelRefs[1] = StringToDouble(outArray[1]);
-        microChannelSize = microChannelRefs[0]-microChannelRefs[1];
+        return microChannel.GetRefs(macroInitRef1,macroInitRef2,lastClosePrice,channelDivider);
     }
 }
 
-void FimatheForexOperation::WaitForPositionEntryPoint(){ //todo define params
-    if(lastClosePrice > EntryPoints[0])//todo this logic is wrong
+void FimatheForexOperation::WaitForPositionEntryPoint(double volume,double microChannelSize,TakeProfitType takeProfitType,double stopLossMultiplier,double[] entryPoints){ //todo define params
+    
+
+    if(lastClosePrice > entryPoints[0])//todo this logic is wrong
     {
         trade.Buy(volume,Symbol(),0.0,microChannelSize*-stopLossMultiplier,
         (takeProfitType==SURF ? 0.0 : microChannelSize*TakeProfitTypeToNumber(takeProfitType)),NULL);
     }
-    if(lastClosePrice < EntryPoints[1])//todo this logic is wrong
+    if(lastClosePrice < entryPoints[1])//todo this logic is wrong
       {
         trade.Sell(volume,Symbol(),0.0,microChannelSize*stopLossMultiplier,
         (takeProfitType==SURF ? 0.0 : microChannelSize*-TakeProfitTypeToNumber(takeProfitType)),NULL);
