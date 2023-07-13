@@ -1,10 +1,38 @@
-class MicroChannel {
+#include "Enums/TakeProfitType.mqh"
+
+class ExpertAdvisorInfo {
 public:
-    string GetRefs(double macroRef1,double macroRef2,double lastClosePrice,double channelDivider);
-    string GetCurrent(double microRef1,double microRef2,double close);
+  double volume;
+  TakeProfitType takeProfitType;
+  double stopLossMultiplier;
+  double channelDivider;
+  double midValue;
+
+  double macroRef1;
+  double macroRef2;
+  double microRef1;
+  double microRef2;
+  double microChannelSize;
+  double macroChannelSize;
+
+  double entryPoint1;
+  double entryPoint2;
+  double entryPoint3;
+  double entryPoint4;
+
+  double GetLastClosePriceM15(void);
+  void CreateNewMicroChannel(void);
+  void UpdateMicroChannel(void);
+  void UpdateMacroChannel(void);
 };
 
-string MicroChannel::GetRefs(double macroRef1,double macroRef2,double lastClosePrice,double channelDivider) {
+double ExpertAdvisorInfo::GetLastClosePriceM15(void) {
+    double Close[1];
+    CopyClose(Symbol(), PERIOD_M15, 1, 1, Close);
+    return Close[0];
+}
+
+void ExpertAdvisorInfo::CreateNewMicroChannel() {
     
     double rangeOfCalculation = 1.5;
     double maxMicroChannelSize = macroRef1-macroRef2/(channelDivider-rangeOfCalculation);
@@ -31,7 +59,7 @@ string MicroChannel::GetRefs(double macroRef1,double macroRef2,double lastCloseP
     ArraySort(out);//sorted array with all prices between 0 to 6 oclock
     int repeatedClosePrices = 10;
     double leastDiff = out[repeatedClosePrices-1] - out[0];
-    double midValue;
+
     int indexCorrection = repeatedClosePrices - 1;
     for (int i=1; i<ArraySize(out)-repeatedClosePrices-1; i++)
     {
@@ -43,7 +71,6 @@ string MicroChannel::GetRefs(double macroRef1,double macroRef2,double lastCloseP
         }
     }
     leastDiff = MathAbs((midValue)-out[0]);
-    double microRef1;
     for (int i=1; i<ArraySize(out); i++)
     {
         if(MathAbs((midValue)-out[i]) < leastDiff)
@@ -79,7 +106,6 @@ string MicroChannel::GetRefs(double macroRef1,double macroRef2,double lastCloseP
       }
     }
     leastDiff = MathAbs((midValue)-out2[0]);
-    double microRef2;
     for (int i=1; i<ArraySize(out2); i++)
     {
         if(MathAbs((midValue)-out2[i]) < leastDiff)
@@ -93,31 +119,49 @@ string MicroChannel::GetRefs(double macroRef1,double macroRef2,double lastCloseP
         microRef2 = v;
     }
 
-    return GetCurrent(microRef1,microRef2,lastClosePrice);
+    UpdateMicroChannel();
 }
 
-string MicroChannel::GetCurrent(double microRef1,double microRef2,double close) {
+void ExpertAdvisorInfo::UpdateMicroChannel() {
 
-    double channelSize = microRef1-microRef2;
-    
-    if(microRef1 > close && microRef2 < close)
-    {return DoubleToString(microRef1)+"|"+DoubleToString(microRef2);}
+    microChannelSize = microRef1-microRef2;
+    double close = GetLastClosePriceM15();
 
     if(microRef1 < close)
     {
         while (microRef1 < close)
-        {microRef1 += channelSize;}
-        microRef2 = microRef1 - channelSize;
-        return DoubleToString(microRef1)+"|"+DoubleToString(microRef2);
+        {microRef1 += microChannelSize;}
+        microRef2 = microRef1 - microChannelSize;
     }
 
     if(microRef2 > close)
     {
         while (microRef2 > close)
-        {microRef2 -= channelSize;}
-        microRef1 = microRef2 + channelSize;
-        return DoubleToString(microRef1)+"|"+DoubleToString(microRef2);
+        {microRef2 -= microChannelSize;}
+        microRef1 = microRef2 + microChannelSize;
     }
-    return NULL;
+
+    microChannelSize = microRef1-microRef2;
 }
+
+void ExpertAdvisorInfo::UpdateMacroChannel() {
+
+    macroChannelSize = macroRef1-macroRef2;
+    double close = GetLastClosePriceM15();
     
+    if(macroRef1 < close)
+    {
+        while (macroRef1 < close)
+        {macroRef1 += macroChannelSize;}
+        macroRef2 = macroRef1 - macroChannelSize;
+    }
+
+    if(macroRef2 > close)
+    {
+        while (macroRef2 > close)
+        {macroRef2 -= macroChannelSize;}
+        macroRef1 = macroRef2 + macroChannelSize;
+    }
+}
+
+

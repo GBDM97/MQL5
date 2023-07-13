@@ -1,29 +1,23 @@
 #include "../Operators/FimatheForexOperation/Index.mqh"
-#include "../Operators/FimatheForexOperation/OperationInfo.mqh"
+#include "../Operators/FimatheForexOperation/ExpertAdvisorInfo.mqh"
+#include "Enums/TakeProfitType.mqh"
 
 FimatheForexOperation fimatheForexOperation;
-OperationInfo operationInfo;
+ExpertAdvisorInfo expertAdvisorInfo;
 
-enum takeProfitType {
-    SURF,
-    ONE_LEVEL,
-    TWO_LEVELS,
-    THREE_LEVELS,
-    FOUR_LEVELS
-   };
 input double volume;
-input TakeProfitType takeProfitType = SURF;
+input takeProfitType tpType = SURF;
 input double stopLossMultiplier = 2.25;
 input double macroInitRef1;
 input double macroInitRef2;
 input double channelDivider = 8.5;
 
-operationInfo.volume = volume;
-operationInfo.takeProfitType = takeProfitType;
-operationInfo.stopLossMultiplier = stopLossMultiplier;
-operationInfo.macroInitRef1 = macroInitRef1;
-operationInfo.macroInitRef2 = macroInitRef2;
-operationInfo.channelDivider = channelDivider;
+expertAdvisorInfo.volume = volume;
+expertAdvisorInfo.takeProfitType = tpType;
+expertAdvisorInfo.stopLossMultiplier = stopLossMultiplier;
+expertAdvisorInfo.macroInitRef1 = macroInitRef1;
+expertAdvisorInfo.macroInitRef2 = macroInitRef2;
+expertAdvisorInfo.channelDivider = channelDivider;
 
 int OnInit()
   {
@@ -37,5 +31,5 @@ int OnInit()
 
 void OnTick()
   { 
-   fimatheForexOperation.Update(operationInfo);
+   fimatheForexOperation.Update(expertAdvisorInfo);
   }
