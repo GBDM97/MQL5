@@ -41,13 +41,13 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
         recentPosition = false;
     }
 
-    if(expertAdvisorInfo.entryPoint1 == -1 || expertAdvisorInfo.entryPoint2 == -1 || 
-    expertAdvisorInfo.entryPoint3 == -1 || expertAdvisorInfo.entryPoint4 == -1){
+    if(expertAdvisorInfo.entryPoint1 == 0 || expertAdvisorInfo.entryPoint2 == 0 || 
+    expertAdvisorInfo.entryPoint3 == 0 || expertAdvisorInfo.entryPoint4 == 0){
         CheckWhereToOpenNextOrder();
     }
 
-    if(expertAdvisorInfo.entryPoint1 != -1 || expertAdvisorInfo.entryPoint2 != -1 || 
-    expertAdvisorInfo.entryPoint3 != -1 || expertAdvisorInfo.entryPoint4 != -1){
+    if(expertAdvisorInfo.entryPoint1 != 0 || expertAdvisorInfo.entryPoint2 != 0 || 
+    expertAdvisorInfo.entryPoint3 != 0 || expertAdvisorInfo.entryPoint4 != 0){
         WaitForPositionEntryPoint();
     }
 }
@@ -62,28 +62,32 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         return;
     }
     //todo logic to 50% return, after position opened and get or dont get expertAdvisorInfo.entryPoint
-    if(expertAdvisorInfo.entryPoint1 == -1) 
+    if(expertAdvisorInfo.entryPoint1 == 0) 
     {
-        //todo expertAdvisorInfo.entryPoint1 getEntryPoint.First();
-        return;
+        expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef1;
+        while (expertAdvisorInfo.entryPoint1 < expertAdvisorInfo.macroRef1 + expertAdvisorInfo.microChannelSize*2)
+        {
+            expertAdvisorInfo.entryPoint1 += expertAdvisorInfo.microChannelSize;
+        }
     }
 
-    if(expertAdvisorInfo.entryPoint2 == -1) 
+    if(expertAdvisorInfo.entryPoint2 == 0) 
     {
-        //todo expertAdvisorInfo.entryPoint2 getEntryPoint.Second();
-        return;
+        //caso
     }
     
-    if(expertAdvisorInfo.entryPoint3 == -1) 
+    if(expertAdvisorInfo.entryPoint3 == 0 || macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4)
     {
-        //todo expertAdvisorInfo.entryPoint3 getEntryPoint.Third();
-        return;
+        expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
     }
     
-    if(expertAdvisorInfo.entryPoint4 == -1) 
+    if(expertAdvisorInfo.entryPoint4 == 0 || macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4) 
     {
-        //todo expertAdvisorInfo.entryPoint4 getEntryPoint.Fourth();
-        return;
+        expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef2;
+        while (expertAdvisorInfo.entryPoint4 > expertAdvisorInfo.macroRef2 - expertAdvisorInfo.microChannelSize*2)
+        {
+            expertAdvisorInfo.entryPoint4 -= expertAdvisorInfo.microChannelSize;
+        }
     }
     
 }
