@@ -61,43 +61,43 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     {
         return;
     }
-    
+
     if(expertAdvisorInfo.entryPoint1 == 0) 
     {
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef1;
+
         while (expertAdvisorInfo.entryPoint1 < expertAdvisorInfo.macroRef1 + expertAdvisorInfo.microChannelSize*2)
-        {
-            expertAdvisorInfo.entryPoint1 += expertAdvisorInfo.microChannelSize;
-        }
+        {expertAdvisorInfo.entryPoint1 += expertAdvisorInfo.microChannelSize;}
     }
 
     if(expertAdvisorInfo.entryPoint4 == 0) 
     {
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef2;
+        
         while (expertAdvisorInfo.entryPoint4 > expertAdvisorInfo.macroRef2 - expertAdvisorInfo.microChannelSize*2)
-        {
-            expertAdvisorInfo.entryPoint4 -= expertAdvisorInfo.microChannelSize;
-        }
+        {expertAdvisorInfo.entryPoint4 -= expertAdvisorInfo.microChannelSize;}
     }
 
     if(macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4)//break through above
     {
         expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
         expertAdvisorInfo.entryPoint4 = expertAdvisorInfo.entryPoint2;
-        if (expertAdvisorInfo.recentOperationEntryPoint == "entryPoint2")
-        {
-            expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4";
-        }
+
+        if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint2")
+        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4";}
+        else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint4")
+        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2";}
     }
 
     if(macroRef2+2*macroChannelSize < expertAdvisorInfo.entryPoint1)//break through bellow
     {
         expertAdvisorInfo.entryPoint2 = expertAdvisorInfo.entryPoint4;
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.entryPoint3;
-        if (expertAdvisorInfo.recentOperationEntryPoint == "entryPoint3")
-        {
-            expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1";
-        }
+
+        if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint3")
+        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1";}
+        else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint1")
+        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3";}
     }
 
     if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
