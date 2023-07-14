@@ -179,7 +179,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
         trade.Buy(ex.volume,Symbol(),0.0,
         ex.microChannelSize*-ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
-        0.0 : ex.microChannelSize*TakeProfitTypeToNumber()),NULL);
+        0.0 : ex.microChannelSize*TakeProfitTypeToNumber()*2),NULL);
     }
     if(close < ex.entryPoint2 && ex.entryPoint2 != 0 && ex.entryPoint2 != -1 && PositionsTotal() == false)
       {
@@ -187,7 +187,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
         trade.Sell(ex.volume,Symbol(),0.0,
         ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType == TakeProfitType(0) ? 
-        0.0 : ex.microChannelSize*-TakeProfitTypeToNumber()),NULL);
+        0.0 : ex.microChannelSize*-TakeProfitTypeToNumber()*2),NULL);
       }   
 }
 
