@@ -5,9 +5,9 @@ public:
   double volume;
   TakeProfitType takeProfitType;
   double stopLossMultiplier;
-  int stopPosition = 0;
+  int stopPosition;
   double channelDivider;
-  bool firstCdPastLine = false;
+  bool firstCdPastLine;
   double firstCdPastLineClose;
 
   double macroRef1;
@@ -26,15 +26,19 @@ public:
 
   double GetLastClosePriceM15(void);
   double GetPositionEntryPrice(void);
+  bool PriceBellow50(void);
+  bool PriceAbove50(void);
   void CreateNewMicroChannel(void);
   void UpdateMicroChannel(void);
   void UpdateMacroChannel(void);
   void UnlockEntryPoints(void);
-  void PriceBellow50(void);
-  void PriceAbove50(void);
   void VerifyToLockEntryPoint(void);
   void TryToDefine1And4(void);
   
+  ExpertAdvisorInfo() {
+    stopPosition = 0; 
+    firstCdPastLine = false;
+  }
 protected:
   double midValue;
   void LockRecentOperationEntryPoint(void);
@@ -231,15 +235,15 @@ void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
         {entryPoint4 = 0;}
 }
 
-void ExpertAdvisorInfo::PriceBellow50(void) {
-    if(recentOperationEntryPoint = "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
-       recentOperationEntryPoint = "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2/2))
+bool ExpertAdvisorInfo::PriceBellow50(void) {
+    if(recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
+       recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2/2))
         {return true;}
     else{return false;}
 }
-void ExpertAdvisorInfo::PriceAbove50(void) {
-    if(recentOperationEntryPoint = "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
-       recentOperationEntryPoint = "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2/2))
+bool ExpertAdvisorInfo::PriceAbove50(void) {
+    if(recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
+       recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2/2))
         {return true;}
     else{return false;}
 }

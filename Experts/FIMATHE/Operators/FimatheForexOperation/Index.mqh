@@ -62,7 +62,7 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
 
 void FimatheForexOperation::ManageTrailingStop(void) {
     PositionSelect(Symbol());
-    if(PositionGetInt(POSITION_TYPE) == 1)
+    if(PositionGetInteger(POSITION_TYPE) == 1)
     {
         if(expertAdvisorInfo.GetLastClosePriceM15() > PositionGetDouble(POSITION_OPEN) + expertAdvisorInfo.microChannelSize 
         && expertAdvisorInfo.stopPosition == 0)
@@ -91,8 +91,39 @@ void FimatheForexOperation::ManageTrailingStop(void) {
             (2.25*expertAdvisorInfo.microChannelSize) && expertAdvisorInfo.stopPosition == 2 &&
              expertAdvisorInfo.takeProfitType == TakeProfitType(0))
             {
-                stop = operationRequest[4][1]-round(0.25*expertAdvisorInfo.microChannelSize)
                 trade.PositionModify(Symbol(),PositionGetDouble(POSITION_SL)+expertAdvisorInfo.microChannelSize,0);
+            }  
+        }
+    }else if(PositionGetInteger(POSITION_TYPE) == 2)
+    {
+        if(expertAdvisorInfo.GetLastClosePriceM15() < PositionGetDouble(POSITION_OPEN) - expertAdvisorInfo.microChannelSize 
+        && expertAdvisorInfo.stopPosition == 0)
+        {
+            if(expertAdvisorInfo.firstCdPastLine == true)
+            {
+                if (expertAdvisorInfo.GetLastClosePriceM15() < expertAdvisorInfo.firstCdPastLineClose)
+                {
+                    expertAdvisorInfo.stopPosition = 1;
+                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_OPEN),0);
+                }
+
+            }else{
+                expertAdvisorInfo.firstCdPastLine = true;
+                expertAdvisorInfo.firstCdPastLineClose = expertAdvisorInfo.GetLastClosePriceM15();
+            }
+
+            if(expertAdvisorInfo.GetLastClosePriceM15() < expertAdvisorInfo.entryPointRefPrice -
+             (expertAdvisorInfo.microChannelSize*2) && expertAdvisorInfo.stopPosition == 1 &&
+             expertAdvisorInfo.takeProfitType == TakeProfitType(0))
+            {
+                    expertAdvisorInfo.stopPosition = 2;
+                    trade.PositionModify(Symbol(),MathRound(expertAdvisorInfo.entryPointRefPrice - 0.75*expertAdvisorInfo.microChannelSize),0);
+
+            }else if(expertAdvisorInfo.GetLastClosePriceM15() < PositionGetDouble(POSITION_SL) - 
+            (2.25*expertAdvisorInfo.microChannelSize) && expertAdvisorInfo.stopPosition == 2 &&
+             expertAdvisorInfo.takeProfitType == TakeProfitType(0))
+            {
+                trade.PositionModify(Symbol(),PositionGetDouble(POSITION_SL) - expertAdvisorInfo.microChannelSize,0);
             }  
         }
     }
