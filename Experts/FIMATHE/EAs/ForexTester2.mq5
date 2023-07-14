@@ -5,7 +5,7 @@
 FimatheForexOperation fimatheForexOperation;
 ExpertAdvisorInfo expertAdvisorInfo;
 
-input double volume;
+input double volumeOfOperations;
 input TakeProfitType tpType = SURF;
 input double stopLossMultiplier = 2.25;
 input double macroInitRef1;
@@ -15,7 +15,7 @@ input double channelDivider = 8.5;
 
 int OnInit()
   {
-    expertAdvisorInfo.volume = volume;
+    expertAdvisorInfo.volume = volumeOfOperations;
     expertAdvisorInfo.takeProfitType = tpType;
     expertAdvisorInfo.stopLossMultiplier = stopLossMultiplier;
     expertAdvisorInfo.macroRef1 = macroInitRef1;
