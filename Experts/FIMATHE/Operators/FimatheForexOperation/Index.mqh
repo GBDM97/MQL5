@@ -32,11 +32,10 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
     if(PositionsTotal()) 
     {
         recentPosition = true;
-        if(expertAdvisorInfo.takeProfitType == TakeProfitType(0)){
-            ManageTrailingStop();//todo
-        }else{return;}
+        ManageTrailingStop();//todo
     }else if(!PositionsTotal() && recentPosition == true){
         //todo mark specific expertAdvisorInfo.entryPoint undefined
+        expertAdvisorInfo.lockSpecificEntryPoints();
         riskManager.AnalizeResults(); //todo
         recentPosition = false;
     }
@@ -61,7 +60,6 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     {
         return;
     }
-
     if(expertAdvisorInfo.entryPoint1 == 0) 
     {
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef1;
@@ -69,15 +67,13 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         while (expertAdvisorInfo.entryPoint1 < expertAdvisorInfo.macroRef1 + expertAdvisorInfo.microChannelSize*2)
         {expertAdvisorInfo.entryPoint1 += expertAdvisorInfo.microChannelSize;}
     }
-
     if(expertAdvisorInfo.entryPoint4 == 0) 
     {
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef2;
-        
+
         while (expertAdvisorInfo.entryPoint4 > expertAdvisorInfo.macroRef2 - expertAdvisorInfo.microChannelSize*2)
         {expertAdvisorInfo.entryPoint4 -= expertAdvisorInfo.microChannelSize;}
     }
-
     if(macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4)//break through above
     {
         expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
@@ -88,7 +84,6 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint4")
         {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2";}
     }
-
     if(macroRef2+2*macroChannelSize < expertAdvisorInfo.entryPoint1)//break through bellow
     {
         expertAdvisorInfo.entryPoint2 = expertAdvisorInfo.entryPoint4;
@@ -99,7 +94,6 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint1")
         {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3";}
     }
-
     if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
        expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2))
     {
@@ -110,11 +104,6 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     {
         expertAdvisorInfo.UnlockAllEntryPoints();
     }
-    
-    
-   
-    
-    
 }
 
 void FimatheForexOperation::UpdateMicroChannel(){
@@ -126,14 +115,14 @@ void FimatheForexOperation::UpdateMicroChannel(){
 void FimatheForexOperation::WaitForPositionEntryPoint(){
     
     double close = expertAdvisorInfo.GetLastClosePriceM15();
-    if(close > expertAdvisorInfo.entryPoint1)//todo this logic is wrong //if PositionsTotal false enter, else do not enter
+    if(close > expertAdvisorInfo.entryPoint3 && expertAdvisorInfo.entryPoint3 != 0 && expertAdvisorInfo.entryPoint3 != -1 && PositionsTotal() == false)
     {
         trade.Buy(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*-expertAdvisorInfo.stopLossMultiplier,
         (expertAdvisorInfo.takeProfitType==TakeProfitType(0) ? 
         0.0 : expertAdvisorInfo.microChannelSize*TakeProfitTypeToNumber()),NULL);
     }
-    if(close < expertAdvisorInfo.entryPoint1)//todo this logic is wrong //if PositionsTotal false enter, else do not enter
+    if(close < expertAdvisorInfo.entryPoint2 && expertAdvisorInfo.entryPoint2 != 0 && expertAdvisorInfo.entryPoint2 != -1 && PositionsTotal() == false)
       {
         trade.Sell(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*expertAdvisorInfo.stopLossMultiplier,

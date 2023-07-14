@@ -24,7 +24,7 @@ public:
   void CreateNewMicroChannel(void);
   void UpdateMicroChannel(void);
   void UpdateMacroChannel(void);
-  void UnlockAllEntryPoints(void);
+  void UnlockEntryPoints(void);
   
 protected:
   double midValue;
@@ -168,7 +168,7 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
     }
 }
 
-void UnlockAllEntryPoints(void) {
+void ExpertAdvisorInfo::UnlockEntryPoints(void) {
     if(entryPoint1 == -1){
         entryPoint1 = 0;
     }
@@ -183,5 +183,26 @@ void UnlockAllEntryPoints(void) {
     }
 }
 
+void ExpertAdvisorInfo::lockSpecificEntryPoints(void) {
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
+       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2))
+        {expertAdvisorInfo.UnlockEntryPoints() }
+    else if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
+       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2))
+        {expertAdvisorInfo.UnlockEntryPoints() }
+    else{expertAdvisorInfo.lockRecentOperationEntryPoint();}
+    
+}
+
+void ExpertAdvisorInfo::lockRecentOperationEntryPoint(void) {
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1")
+        {expertAdvisorInfo.entryPoint1 = -1;}
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2")
+        {expertAdvisorInfo.entryPoint2 = -1;}
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3")
+        {expertAdvisorInfo.entryPoint3 = -1;}
+    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4")
+        {expertAdvisorInfo.entryPoint4 = -1;}
+}
 
 
