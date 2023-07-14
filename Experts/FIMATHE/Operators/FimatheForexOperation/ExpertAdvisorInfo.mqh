@@ -22,6 +22,7 @@ public:
   double entryPoint3;
   double entryPoint4;
   double recentOperationEntryPoint;
+  double entryPointPrice;
 
   double GetLastClosePriceM15(void);
   double GetPositionEntryPrice(void);

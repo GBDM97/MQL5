@@ -69,13 +69,13 @@ void FimatheForexOperation::ManageTrailingStop(void) {
             }else{
                 expertAdvisorInfo.firstCdPastLine = true;
                 expertAdvisorInfo.firstCdPastLineClose = expertAdvisorInfo.GetLastClosePriceM15();
-            if (expertAdvisorInfo.GetLastClosePriceM15() > expertAdvisorInfo.microRef1 + (expertAdvisorInfo.microChannelSize*2) && expertAdvisorInfo.stopPosition == 1)
-                {expertAdvisorInfo.stopPosition = 2
-                stop = round(0.75*expertAdvisorInfo.microChannelSize + expertAdvisorInfo.microRef1)
-                operationRequest[4] = [expertAdvisorInfo.microRef1+expertAdvisorInfo.microChannelSize*3, expertAdvisorInfo.microRef1+expertAdvisorInfo.microChannelSize, expertAdvisorInfo.microChannelSize]
+            if (expertAdvisorInfo.GetLastClosePriceM15() > expertAdvisorInfo.entryPointPrice + (expertAdvisorInfo.microChannelSize*2) && expertAdvisorInfo.stopPosition == 1)
+                {
+                    expertAdvisorInfo.stopPosition = 2;
+                    stop = round(0.75*expertAdvisorInfo.microChannelSize + expertAdvisorInfo.entryPointPrice); //todo insert modify stop expression
                 }
-            if (expertAdvisorInfo.GetLastClosePriceM15()) > expertAdvisorInfo.microRef1 && expertAdvisorInfo.stopPosition == 2:
-                expertAdvisorInfo.microRef1 = expertAdvisorInfo.microRef1+expertAdvisorInfo.microChannelSize
+            if (expertAdvisorInfo.GetLastClosePriceM15()) > expertAdvisorInfo.entryPointPrice && expertAdvisorInfo.stopPosition == 2:
+                expertAdvisorInfo.entryPointPrice = expertAdvisorInfo.entryPointPrice+expertAdvisorInfo.microChannelSize
                 operationRequest[4][1] = operationRequest[4][1]+expertAdvisorInfo.microChannelSize
                 stop = operationRequest[4][1]-round(0.25*expertAdvisorInfo.microChannelSize)
             }
@@ -129,6 +129,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
     double close = expertAdvisorInfo.GetLastClosePriceM15();
     if(close > expertAdvisorInfo.entryPoint3 && expertAdvisorInfo.entryPoint3 != 0 && expertAdvisorInfo.entryPoint3 != -1 && PositionsTotal() == false)
     {
+        expertAdvisorInfo.entryPointPrice = expertAdvisorInfo.entryPoint3;
         trade.Buy(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*-expertAdvisorInfo.stopLossMultiplier,
         (expertAdvisorInfo.takeProfitType==TakeProfitType(0) ? 
@@ -136,6 +137,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
     }
     if(close < expertAdvisorInfo.entryPoint2 && expertAdvisorInfo.entryPoint2 != 0 && expertAdvisorInfo.entryPoint2 != -1 && PositionsTotal() == false)
       {
+        expertAdvisorInfo.entryPointPrice = expertAdvisorInfo.entryPoint2;
         trade.Sell(expertAdvisorInfo.volume,Symbol(),0.0,
         expertAdvisorInfo.microChannelSize*expertAdvisorInfo.stopLossMultiplier,
         (expertAdvisorInfo.takeProfitType == TakeProfitType(0) ? 
