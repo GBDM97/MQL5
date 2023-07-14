@@ -15,7 +15,7 @@ protected:
     int TakeProfitTypeToNumber(void);
     void WaitForPositionEntryPoint(void);
     void UpdateMicroChannel(void);
-    ExpertAdvisorInfo expertAdvisorInfo;
+    ExpertAdvisorInfo ex;
 
     bool recentPosition;
 public:
@@ -24,38 +24,38 @@ public:
 
 void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
     
-    expertAdvisorInfo = paramExpertAdvisorInfo;
+    ex = paramExpertAdvisorInfo;
 
     UpdateMicroChannel();
-    expertAdvisorInfo.UpdateMacroChannel();
+    ex.UpdateMacroChannel();
     
     if(PositionsTotal()) 
     {
         recentPosition = true;
         if(
-            (expertAdvisorInfo.takeProfitType == TakeProfitType(0)) ||
-            (expertAdvisorInfo.takeProfitType == TakeProfitType(1) && expertAdvisorInfo.stopPosition == 0) ||
-            (expertAdvisorInfo.takeProfitType == TakeProfitType(2) && expertAdvisorInfo.stopPosition == 0) ||
-            (expertAdvisorInfo.takeProfitType == TakeProfitType(3) && expertAdvisorInfo.stopPosition == 0) ||
-            (expertAdvisorInfo.takeProfitType == TakeProfitType(4) && expertAdvisorInfo.stopPosition == 0)
+            (ex.takeProfitType == TakeProfitType(0)) ||
+            (ex.takeProfitType == TakeProfitType(1) && ex.stopPosition == 0) ||
+            (ex.takeProfitType == TakeProfitType(2) && ex.stopPosition == 0) ||
+            (ex.takeProfitType == TakeProfitType(3) && ex.stopPosition == 0) ||
+            (ex.takeProfitType == TakeProfitType(4) && ex.stopPosition == 0)
            )
         {ManageTrailingStop();}
 
     }else if(!PositionsTotal() && recentPosition == true){
-        expertAdvisorInfo.stopPosition = 0;
-        expertAdvisorInfo.firstCdPastLine = false;
-        expertAdvisorInfo.VerifyToLockEntryPoint();
+        ex.stopPosition = 0;
+        ex.firstCdPastLine = false;
+        ex.VerifyToLockEntryPoint();
         riskManager.AnalizeResults(); //todo
         recentPosition = false;
     }
 
-    if(expertAdvisorInfo.entryPoint1 == 0 || expertAdvisorInfo.entryPoint2 == 0 || 
-    expertAdvisorInfo.entryPoint3 == 0 || expertAdvisorInfo.entryPoint4 == 0){
+    if(ex.entryPoint1 == 0 || ex.entryPoint2 == 0 || 
+    ex.entryPoint3 == 0 || ex.entryPoint4 == 0){
         CheckWhereToOpenNextOrder();
     }
 
-    if(expertAdvisorInfo.entryPoint1 != 0 || expertAdvisorInfo.entryPoint2 != 0 || 
-    expertAdvisorInfo.entryPoint3 != 0 || expertAdvisorInfo.entryPoint4 != 0){
+    if(ex.entryPoint1 != 0 || ex.entryPoint2 != 0 || 
+    ex.entryPoint3 != 0 || ex.entryPoint4 != 0){
         WaitForPositionEntryPoint();
     }
 }
@@ -64,66 +64,66 @@ void FimatheForexOperation::ManageTrailingStop(void) {
     PositionSelect(Symbol());
     if(PositionGetInteger(POSITION_TYPE) == 1)
     {
-        if(expertAdvisorInfo.GetLastClosePriceM15() > PositionGetDouble(POSITION_PRICE_OPEN) + expertAdvisorInfo.microChannelSize 
-        && expertAdvisorInfo.stopPosition == 0)
+        if(ex.GetLastClosePriceM15() > PositionGetDouble(POSITION_PRICE_OPEN) + ex.microChannelSize 
+        && ex.stopPosition == 0)
         {
-            if(expertAdvisorInfo.firstCdPastLine == true)
+            if(ex.firstCdPastLine == true)
             {
-                if (expertAdvisorInfo.GetLastClosePriceM15() > expertAdvisorInfo.firstCdPastLineClose)
+                if (ex.GetLastClosePriceM15() > ex.firstCdPastLineClose)
                 {
-                    expertAdvisorInfo.stopPosition = 1;
-                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
+                    ex.stopPosition = 1;
+                    tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
             }else{
-                expertAdvisorInfo.firstCdPastLine = true;
-                expertAdvisorInfo.firstCdPastLineClose = expertAdvisorInfo.GetLastClosePriceM15();
+                ex.firstCdPastLine = true;
+                ex.firstCdPastLineClose = ex.GetLastClosePriceM15();
             }
 
-            if(expertAdvisorInfo.GetLastClosePriceM15() > expertAdvisorInfo.entryPointRefPrice +
-             (expertAdvisorInfo.microChannelSize*2) && expertAdvisorInfo.stopPosition == 1 &&
-             expertAdvisorInfo.takeProfitType == TakeProfitType(0))
+            if(ex.GetLastClosePriceM15() > ex.entryPointRefPrice +
+             (ex.microChannelSize*2) && ex.stopPosition == 1 &&
+             ex.takeProfitType == TakeProfitType(0))
             {
-                    expertAdvisorInfo.stopPosition = 2;
-                    trade.PositionModify(Symbol(),MathRound(0.75*expertAdvisorInfo.microChannelSize + expertAdvisorInfo.entryPointRefPrice),0);
+                    ex.stopPosition = 2;
+                    tradex.PositionModify(Symbol(),MathRound(0.75*ex.microChannelSize + ex.entryPointRefPrice),0);
 
-            }else if(expertAdvisorInfo.GetLastClosePriceM15() > PositionGetDouble(POSITION_SL) + 
-            (2.25*expertAdvisorInfo.microChannelSize) && expertAdvisorInfo.stopPosition == 2 &&
-             expertAdvisorInfo.takeProfitType == TakeProfitType(0))
+            }else if(ex.GetLastClosePriceM15() > PositionGetDouble(POSITION_SL) + 
+            (2.25*ex.microChannelSize) && ex.stopPosition == 2 &&
+             ex.takeProfitType == TakeProfitType(0))
             {
-                trade.PositionModify(Symbol(),PositionGetDouble(POSITION_SL)+expertAdvisorInfo.microChannelSize,0);
+                tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_SL)+ex.microChannelSize,0);
             }  
         }
     }else if(PositionGetInteger(POSITION_TYPE) == 2)
     {
-        if(expertAdvisorInfo.GetLastClosePriceM15() < PositionGetDouble(POSITION_PRICE_OPEN) - expertAdvisorInfo.microChannelSize 
-        && expertAdvisorInfo.stopPosition == 0)
+        if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_PRICE_OPEN) - ex.microChannelSize 
+        && ex.stopPosition == 0)
         {
-            if(expertAdvisorInfo.firstCdPastLine == true)
+            if(ex.firstCdPastLine == true)
             {
-                if (expertAdvisorInfo.GetLastClosePriceM15() < expertAdvisorInfo.firstCdPastLineClose)
+                if (ex.GetLastClosePriceM15() < ex.firstCdPastLineClose)
                 {
-                    expertAdvisorInfo.stopPosition = 1;
-                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
+                    ex.stopPosition = 1;
+                    tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
             }else{
-                expertAdvisorInfo.firstCdPastLine = true;
-                expertAdvisorInfo.firstCdPastLineClose = expertAdvisorInfo.GetLastClosePriceM15();
+                ex.firstCdPastLine = true;
+                ex.firstCdPastLineClose = ex.GetLastClosePriceM15();
             }
 
-            if(expertAdvisorInfo.GetLastClosePriceM15() < expertAdvisorInfo.entryPointRefPrice -
-             (expertAdvisorInfo.microChannelSize*2) && expertAdvisorInfo.stopPosition == 1 &&
-             expertAdvisorInfo.takeProfitType == TakeProfitType(0))
+            if(ex.GetLastClosePriceM15() < ex.entryPointRefPrice -
+             (ex.microChannelSize*2) && ex.stopPosition == 1 &&
+             ex.takeProfitType == TakeProfitType(0))
             {
-                    expertAdvisorInfo.stopPosition = 2;
-                    trade.PositionModify(Symbol(),MathRound(expertAdvisorInfo.entryPointRefPrice - 0.75*expertAdvisorInfo.microChannelSize),0);
+                    ex.stopPosition = 2;
+                    tradex.PositionModify(Symbol(),MathRound(ex.entryPointRefPrice - 0.75*ex.microChannelSize),0);
 
-            }else if(expertAdvisorInfo.GetLastClosePriceM15() < PositionGetDouble(POSITION_SL) - 
-            (2.25*expertAdvisorInfo.microChannelSize) && expertAdvisorInfo.stopPosition == 2 &&
-             expertAdvisorInfo.takeProfitType == TakeProfitType(0))
+            }else if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_SL) - 
+            (2.25*ex.microChannelSize) && ex.stopPosition == 2 &&
+             ex.takeProfitType == TakeProfitType(0))
             {
-                trade.PositionModify(Symbol(),PositionGetDouble(POSITION_SL) - expertAdvisorInfo.microChannelSize,0);
+                tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_SL) - ex.microChannelSize,0);
             }  
         }
     }
@@ -134,71 +134,71 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     {
         return;
     }
-    expertAdvisorInfo.TryToDefine1And4();
+    ex.TryToDefine1And4();
 
-    if(expertAdvisorInfo.macroRef1-2*expertAdvisorInfo.macroChannelSize > expertAdvisorInfo.entryPoint4)//break through above
+    if(ex.macroRef1-2*ex.macroChannelSize > ex.entryPoint4)//break through above
     {
-        expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
-        expertAdvisorInfo.entryPoint4 = expertAdvisorInfo.entryPoint2;
+        ex.entryPoint3 = ex.entryPoint1;
+        ex.entryPoint4 = ex.entryPoint2;
 
-        if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint2")
-        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4";}
-        else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint4")
-        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2";}
+        if(ex.recentOperationEntryPoint == "entryPoint2")
+        {ex.recentOperationEntryPoint = "entryPoint4";}
+        else if(ex.recentOperationEntryPoint == "entryPoint4")
+        {ex.recentOperationEntryPoint = "entryPoint2";}
     }
-    if(expertAdvisorInfo.macroRef2+2*expertAdvisorInfo.macroChannelSize < expertAdvisorInfo.entryPoint1)//break through bellow
+    if(ex.macroRef2+2*ex.macroChannelSize < ex.entryPoint1)//break through bellow
     {
-        expertAdvisorInfo.entryPoint2 = expertAdvisorInfo.entryPoint4;
-        expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.entryPoint3;
+        ex.entryPoint2 = ex.entryPoint4;
+        ex.entryPoint1 = ex.entryPoint3;
 
-        if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint3")
-        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1";}
-        else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint1")
-        {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3";}
+        if(ex.recentOperationEntryPoint == "entryPoint3")
+        {ex.recentOperationEntryPoint = "entryPoint1";}
+        else if(ex.recentOperationEntryPoint == "entryPoint1")
+        {ex.recentOperationEntryPoint = "entryPoint3";}
     }
-    if(expertAdvisorInfo.PriceBellow50()){
-        expertAdvisorInfo.UnlockEntryPoints();
+    if(ex.PriceBellow50()){
+        ex.UnlockEntryPoints();
     }
-    if(expertAdvisorInfo.PriceAbove50()){
-        expertAdvisorInfo.UnlockEntryPoints();
+    if(ex.PriceAbove50()){
+        ex.UnlockEntryPoints();
     }
 }
 
 void FimatheForexOperation::UpdateMicroChannel(){
     if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeToString(TimeCurrent()),11,8) == "06:00:00")
-    {expertAdvisorInfo.CreateNewMicroChannel();}
-    else{expertAdvisorInfo.UpdateMicroChannel();}
+    {ex.CreateNewMicroChannel();}
+    else{ex.UpdateMicroChannel();}
 }
 
 void FimatheForexOperation::WaitForPositionEntryPoint(){
     
-    double close = expertAdvisorInfo.GetLastClosePriceM15();
-    if(close > expertAdvisorInfo.entryPoint3 && expertAdvisorInfo.entryPoint3 != 0 && expertAdvisorInfo.entryPoint3 != -1 && PositionsTotal() == false)
+    double close = ex.GetLastClosePriceM15();
+    if(close > ex.entryPoint3 && ex.entryPoint3 != 0 && ex.entryPoint3 != -1 && PositionsTotal() == false)
     {
-        expertAdvisorInfo.entryPointRefPrice = expertAdvisorInfo.entryPoint3;
-        trade.Buy(expertAdvisorInfo.volume,Symbol(),0.0,
-        expertAdvisorInfo.microChannelSize*-expertAdvisorInfo.stopLossMultiplier,
-        (expertAdvisorInfo.takeProfitType==TakeProfitType(0) ? 
-        0.0 : expertAdvisorInfo.microChannelSize*TakeProfitTypeToNumber()),NULL);
+        ex.entryPointRefPrice = ex.entryPoint3;
+        tradex.Buy(ex.volume,Symbol(),0.0,
+        ex.microChannelSize*-ex.stopLossMultiplier,
+        (ex.takeProfitType==TakeProfitType(0) ? 
+        0.0 : ex.microChannelSize*TakeProfitTypeToNumber()),NULL);
     }
-    if(close < expertAdvisorInfo.entryPoint2 && expertAdvisorInfo.entryPoint2 != 0 && expertAdvisorInfo.entryPoint2 != -1 && PositionsTotal() == false)
+    if(close < ex.entryPoint2 && ex.entryPoint2 != 0 && ex.entryPoint2 != -1 && PositionsTotal() == false)
       {
-        expertAdvisorInfo.entryPointRefPrice = expertAdvisorInfo.entryPoint2;
-        trade.Sell(expertAdvisorInfo.volume,Symbol(),0.0,
-        expertAdvisorInfo.microChannelSize*expertAdvisorInfo.stopLossMultiplier,
-        (expertAdvisorInfo.takeProfitType == TakeProfitType(0) ? 
-        0.0 : expertAdvisorInfo.microChannelSize*-TakeProfitTypeToNumber()),NULL);
+        ex.entryPointRefPrice = ex.entryPoint2;
+        tradex.Sell(ex.volume,Symbol(),0.0,
+        ex.microChannelSize*ex.stopLossMultiplier,
+        (ex.takeProfitType == TakeProfitType(0) ? 
+        0.0 : ex.microChannelSize*-TakeProfitTypeToNumber()),NULL);
       }   
 }
 
 int FimatheForexOperation::TakeProfitTypeToNumber() {
-    if(expertAdvisorInfo.takeProfitType == TakeProfitType(1))
+    if(ex.takeProfitType == TakeProfitType(1))
     {return 1;}
-    if(expertAdvisorInfo.takeProfitType == TakeProfitType(2))
+    if(ex.takeProfitType == TakeProfitType(2))
     {return 2;}
-    if(expertAdvisorInfo.takeProfitType == TakeProfitType(3))
+    if(ex.takeProfitType == TakeProfitType(3))
     {return 3;}
-    if(expertAdvisorInfo.takeProfitType == TakeProfitType(4))
+    if(ex.takeProfitType == TakeProfitType(4))
     {return 4;}
     return NULL;
 }
