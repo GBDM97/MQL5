@@ -7,4 +7,7 @@ void OnTick(){
    };
    
    Comment(2 == vars(2));
+   PositionSelect(Symbol());
+   PositionGetDouble(POSITION_SL);
+   
 }
