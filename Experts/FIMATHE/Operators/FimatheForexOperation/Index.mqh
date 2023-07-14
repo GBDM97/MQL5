@@ -34,8 +34,7 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
         recentPosition = true;
         ManageTrailingStop();//todo
     }else if(!PositionsTotal() && recentPosition == true){
-        //todo mark specific expertAdvisorInfo.entryPoint undefined
-        expertAdvisorInfo.lockSpecificEntryPoints();
+        expertAdvisorInfo.VerifyToLockEntryPoint();
         riskManager.AnalizeResults(); //todo
         recentPosition = false;
     }
@@ -60,20 +59,8 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     {
         return;
     }
-    if(expertAdvisorInfo.entryPoint1 == 0) 
-    {
-        expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef1;
+    expertAdvisorInfo.TryToDefine1And4();
 
-        while (expertAdvisorInfo.entryPoint1 < expertAdvisorInfo.macroRef1 + expertAdvisorInfo.microChannelSize*2)
-        {expertAdvisorInfo.entryPoint1 += expertAdvisorInfo.microChannelSize;}
-    }
-    if(expertAdvisorInfo.entryPoint4 == 0) 
-    {
-        expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.microRef2;
-
-        while (expertAdvisorInfo.entryPoint4 > expertAdvisorInfo.macroRef2 - expertAdvisorInfo.microChannelSize*2)
-        {expertAdvisorInfo.entryPoint4 -= expertAdvisorInfo.microChannelSize;}
-    }
     if(macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4)//break through above
     {
         expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
@@ -94,15 +81,11 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint1")
         {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3";}
     }
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
-       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2))
-    {
-        expertAdvisorInfo.UnlockAllEntryPoints();
+    if(expertAdvisorInfo.PriceBellow50()){
+        expertAdvisorInfo.UnlockEntryPoints();
     }
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
-       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2))
-    {
-        expertAdvisorInfo.UnlockAllEntryPoints();
+    if(expertAdvisorInfo.PriceAbove50()){
+        expertAdvisorInfo.UnlockEntryPoints();
     }
 }
 

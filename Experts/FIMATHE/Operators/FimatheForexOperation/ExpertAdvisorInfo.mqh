@@ -25,9 +25,15 @@ public:
   void UpdateMicroChannel(void);
   void UpdateMacroChannel(void);
   void UnlockEntryPoints(void);
+  void PriceBellow50(void);
+  void PriceAbove50(void);
+  void VerifyToLockEntryPoint(void);
+  void TryToDefine1And4(void);
   
 protected:
   double midValue;
+  void LockRecentOperationEntryPoint(void);
+  void UndefineRecentOperationEntryPoint(void);
 };
 
 double ExpertAdvisorInfo::GetLastClosePriceM15(void) {
@@ -175,7 +181,7 @@ void ExpertAdvisorInfo::UnlockEntryPoints(void) {
     if(entryPoint2 == -1){
         entryPoint2 = 0;
     }
-    if(entryPoint3 == -3){
+    if(entryPoint3 == -1){
         entryPoint3 = 0;
     }
     if(entryPoint4 == -1){
@@ -183,26 +189,69 @@ void ExpertAdvisorInfo::UnlockEntryPoints(void) {
     }
 }
 
-void ExpertAdvisorInfo::lockSpecificEntryPoints(void) {
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
-       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2" && expertAdvisorInfo.GetLastClosePriceM15()<(macroRef1+macroRef2/2))
-        {expertAdvisorInfo.UnlockEntryPoints() }
-    else if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
-       expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4" && expertAdvisorInfo.GetLastClosePriceM15()>(macroRef1+macroRef2/2))
-        {expertAdvisorInfo.UnlockEntryPoints() }
-    else{expertAdvisorInfo.lockRecentOperationEntryPoint();}
+void ExpertAdvisorInfo::VerifyToLockEntryPoint(void) {
+    if(PriceBellow50())
+        {
+            UndefineRecentOperationEntryPoint();
+            TryToDefine1And4();
+        }
+    else if(PriceAbove50())
+        {
+            UndefineRecentOperationEntryPoint();
+            TryToDefine1And4();
+        }
+    else{LockRecentOperationEntryPoint();}
     
 }
 
-void ExpertAdvisorInfo::lockRecentOperationEntryPoint(void) {
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint1")
-        {expertAdvisorInfo.entryPoint1 = -1;}
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2")
-        {expertAdvisorInfo.entryPoint2 = -1;}
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint3")
-        {expertAdvisorInfo.entryPoint3 = -1;}
-    if(expertAdvisorInfo.recentOperationEntryPoint = "entryPoint4")
-        {expertAdvisorInfo.entryPoint4 = -1;}
+void ExpertAdvisorInfo::LockRecentOperationEntryPoint(void) {
+    if(recentOperationEntryPoint = "entryPoint1")
+        {entryPoint1 = -1;}
+    if(recentOperationEntryPoint = "entryPoint2")
+        {entryPoint2 = -1;}
+    if(recentOperationEntryPoint = "entryPoint3")
+        {entryPoint3 = -1;}
+    if(recentOperationEntryPoint = "entryPoint4")
+        {entryPoint4 = -1;}
 }
 
+void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
+    if(recentOperationEntryPoint = "entryPoint1")
+        {entryPoint1 = 0;}
+    if(recentOperationEntryPoint = "entryPoint2")
+        {entryPoint2 = 0;}
+    if(recentOperationEntryPoint = "entryPoint3")
+        {entryPoint3 = 0;}
+    if(recentOperationEntryPoint = "entryPoint4")
+        {entryPoint4 = 0;}
+}
 
+void ExpertAdvisorInfo::PriceBellow50(void) {
+    if(recentOperationEntryPoint = "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
+       recentOperationEntryPoint = "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2/2))
+        {return true;}
+    else{return false;}
+}
+void ExpertAdvisorInfo::PriceAbove50(void) {
+    if(recentOperationEntryPoint = "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
+       recentOperationEntryPoint = "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2/2))
+        {return true;}
+    else{return false;}
+}
+
+void ExpertAdvisorInfo::TryToDefine1And4(void) {
+    if(entryPoint1 == 0) 
+    {
+        entryPoint1 = microRef1;
+
+        while (entryPoint1 < macroRef1 + microChannelSize*2)
+        {entryPoint1 += microChannelSize;}
+    }
+    if(entryPoint4 == 0) 
+    {
+        entryPoint1 = microRef2;
+
+        while (entryPoint4 > macroRef2 - microChannelSize*2)
+        {entryPoint4 -= microChannelSize;}
+    }
+};
