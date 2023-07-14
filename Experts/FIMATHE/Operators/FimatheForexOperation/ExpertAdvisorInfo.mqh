@@ -5,7 +5,10 @@ public:
   double volume;
   TakeProfitType takeProfitType;
   double stopLossMultiplier;
+  int stopPosition = 0;
   double channelDivider;
+  bool firstCdPastLine = false;
+  double firstCdPastLineClose;
 
   double macroRef1;
   double macroRef2;
@@ -21,6 +24,7 @@ public:
   double recentOperationEntryPoint;
 
   double GetLastClosePriceM15(void);
+  double GetPositionEntryPrice(void);
   void CreateNewMicroChannel(void);
   void UpdateMicroChannel(void);
   void UpdateMacroChannel(void);
@@ -254,4 +258,4 @@ void ExpertAdvisorInfo::TryToDefine1And4(void) {
         while (entryPoint4 > macroRef2 - microChannelSize*2)
         {entryPoint4 -= microChannelSize;}
     }
-};
+}

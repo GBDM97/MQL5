@@ -34,6 +34,8 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
         recentPosition = true;
         ManageTrailingStop();//todo
     }else if(!PositionsTotal() && recentPosition == true){
+        expertAdvisorInfo.stopPosition = 0;
+        expertAdvisorInfo.firstCdPastLine == false;
         expertAdvisorInfo.VerifyToLockEntryPoint();
         riskManager.AnalizeResults(); //todo
         recentPosition = false;
@@ -51,7 +53,34 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
 }
 
 void FimatheForexOperation::ManageTrailingStop(void) {
-    //todo
+    
+    if(PositionGetInt(POSITION_TYPE) == 1)
+    {
+        if(expertAdvisorInfo.GetLastClosePriceM15() > PositionGetDouble(POSITION_OPEN) + expertAdvisorInfo.microChannelSize 
+        && expertAdvisorInfo.stopPosition == 0)
+        {
+            if(expertAdvisorInfo.firstCdPastLine == true)
+            {
+                if (expertAdvisorInfo.GetLastClosePriceM15() > expertAdvisorInfo.firstCdPastLineClose)
+                {
+                    expertAdvisorInfo.stopPosition = 1;
+                    stop = PositionGetDouble(POSITION_OPEN);//todo insert modify stop expression
+                }
+            }else{
+                expertAdvisorInfo.firstCdPastLine = true;
+                expertAdvisorInfo.firstCdPastLineClose = expertAdvisorInfo.GetLastClosePriceM15();
+            if (expertAdvisorInfo.GetLastClosePriceM15() > expertAdvisorInfo.microRef1 + (expertAdvisorInfo.microChannelSize*2) && expertAdvisorInfo.stopPosition == 1)
+                {expertAdvisorInfo.stopPosition = 2
+                stop = round(0.75*expertAdvisorInfo.microChannelSize + expertAdvisorInfo.microRef1)
+                operationRequest[4] = [expertAdvisorInfo.microRef1+expertAdvisorInfo.microChannelSize*3, expertAdvisorInfo.microRef1+expertAdvisorInfo.microChannelSize, expertAdvisorInfo.microChannelSize]
+                }
+            if (expertAdvisorInfo.GetLastClosePriceM15()) > expertAdvisorInfo.microRef1 && expertAdvisorInfo.stopPosition == 2:
+                expertAdvisorInfo.microRef1 = expertAdvisorInfo.microRef1+expertAdvisorInfo.microChannelSize
+                operationRequest[4][1] = operationRequest[4][1]+expertAdvisorInfo.microChannelSize
+                stop = operationRequest[4][1]-round(0.25*expertAdvisorInfo.microChannelSize)
+            }
+        }
+    }
 }
 
 void FimatheForexOperation::CheckWhereToOpenNextOrder() {
