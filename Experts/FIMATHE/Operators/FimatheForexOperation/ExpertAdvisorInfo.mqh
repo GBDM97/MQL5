@@ -96,8 +96,8 @@ void ExpertAdvisorInfo::CreateNewMicroChannel() {
         {microRef1 = out[i];}//finds the real price near the midvalue
     }
 
-    double firstRangeTofindSecondRef[];
-    double secondRangeTofindSecondRef[];
+    double firstRangeTofindSecondRef[2];
+    double secondRangeTofindSecondRef[2];
     double out2[];
     firstRangeTofindSecondRef[0] = microRef1 + minMicroChannelSize;
     firstRangeTofindSecondRef[1] = microRef1 + maxMicroChannelSize;
