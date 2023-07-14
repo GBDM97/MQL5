@@ -72,7 +72,7 @@ void FimatheForexOperation::ManageTrailingStop(void) {
                 if (ex.GetLastClosePriceM15() > ex.firstCdPastLineClose)
                 {
                     ex.stopPosition = 1;
-                    tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
+                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
             }else{
@@ -85,13 +85,13 @@ void FimatheForexOperation::ManageTrailingStop(void) {
              ex.takeProfitType == TakeProfitType(0))
             {
                     ex.stopPosition = 2;
-                    tradex.PositionModify(Symbol(),MathRound(0.75*ex.microChannelSize + ex.entryPointRefPrice),0);
+                    trade.PositionModify(Symbol(),MathRound(0.75*ex.microChannelSize + ex.entryPointRefPrice),0);
 
             }else if(ex.GetLastClosePriceM15() > PositionGetDouble(POSITION_SL) + 
             (2.25*ex.microChannelSize) && ex.stopPosition == 2 &&
              ex.takeProfitType == TakeProfitType(0))
             {
-                tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_SL)+ex.microChannelSize,0);
+                trade.PositionModify(Symbol(),PositionGetDouble(POSITION_SL)+ex.microChannelSize,0);
             }  
         }
     }else if(PositionGetInteger(POSITION_TYPE) == 2)
@@ -104,7 +104,7 @@ void FimatheForexOperation::ManageTrailingStop(void) {
                 if (ex.GetLastClosePriceM15() < ex.firstCdPastLineClose)
                 {
                     ex.stopPosition = 1;
-                    tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
+                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
             }else{
@@ -117,13 +117,13 @@ void FimatheForexOperation::ManageTrailingStop(void) {
              ex.takeProfitType == TakeProfitType(0))
             {
                     ex.stopPosition = 2;
-                    tradex.PositionModify(Symbol(),MathRound(ex.entryPointRefPrice - 0.75*ex.microChannelSize),0);
+                    trade.PositionModify(Symbol(),MathRound(ex.entryPointRefPrice - 0.75*ex.microChannelSize),0);
 
             }else if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_SL) - 
             (2.25*ex.microChannelSize) && ex.stopPosition == 2 &&
              ex.takeProfitType == TakeProfitType(0))
             {
-                tradex.PositionModify(Symbol(),PositionGetDouble(POSITION_SL) - ex.microChannelSize,0);
+                trade.PositionModify(Symbol(),PositionGetDouble(POSITION_SL) - ex.microChannelSize,0);
             }  
         }
     }
@@ -176,7 +176,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
     if(close > ex.entryPoint3 && ex.entryPoint3 != 0 && ex.entryPoint3 != -1 && PositionsTotal() == false)
     {
         ex.entryPointRefPrice = ex.entryPoint3;
-        tradex.Buy(ex.volume,Symbol(),0.0,
+        trade.Buy(ex.volume,Symbol(),0.0,
         ex.microChannelSize*-ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
         0.0 : ex.microChannelSize*TakeProfitTypeToNumber()),NULL);
@@ -184,7 +184,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
     if(close < ex.entryPoint2 && ex.entryPoint2 != 0 && ex.entryPoint2 != -1 && PositionsTotal() == false)
       {
         ex.entryPointRefPrice = ex.entryPoint2;
-        tradex.Sell(ex.volume,Symbol(),0.0,
+        trade.Sell(ex.volume,Symbol(),0.0,
         ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType == TakeProfitType(0) ? 
         0.0 : ex.microChannelSize*-TakeProfitTypeToNumber()),NULL);
