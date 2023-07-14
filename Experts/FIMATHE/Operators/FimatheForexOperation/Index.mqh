@@ -27,6 +27,7 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
     ex = paramExpertAdvisorInfo;
 
     UpdateMicroChannel();
+    if(ex.microRef1 == 0){return;}
     ex.UpdateMacroChannel();
     
     if(PositionsTotal()) 
@@ -165,9 +166,10 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
 }
 
 void FimatheForexOperation::UpdateMicroChannel(){
-    if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeToString(TimeCurrent()),11,8) == "06:00:00")
+    if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeToString(TimeCurrent()),11,2) == "06")
     {ex.CreateNewMicroChannel();}
-    else{ex.UpdateMicroChannel();}
+    else if(ex.microRef1 != 0){ex.UpdateMicroChannel();}
+    else{return;}
 }
 
 void FimatheForexOperation::WaitForPositionEntryPoint(){
