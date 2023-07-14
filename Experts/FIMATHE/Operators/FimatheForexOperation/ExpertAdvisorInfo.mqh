@@ -53,14 +53,14 @@ double ExpertAdvisorInfo::GetLastClosePriceM15(void) {
 
 void ExpertAdvisorInfo::CreateNewMicroChannel() {
     
-    double rangeOfCalculation = 1.5;
-    double maxMicroChannelSize = macroRef1-macroRef2/(channelDivider-rangeOfCalculation);
-    double minMicroChannelSize = macroRef1-macroRef2/(channelDivider+rangeOfCalculation);
+    double rangeOfCalculation = 3.5;
+    double maxMicroChannelSize = (macroRef1-macroRef2)/(channelDivider-rangeOfCalculation);
+    double minMicroChannelSize = (macroRef1-macroRef2)/(channelDivider+rangeOfCalculation);
 
     double out[];
 
     MqlRates rates[];
-    CopyRates(Symbol(),PERIOD_M15,0,24,rates);//24 cds behind
+    CopyRates(Symbol(),PERIOD_M15,0,25,rates);//24 cds behind
     for (int i=0; i<24; i++)
     {
         ArrayResize(out, ArraySize(out) + 1);
@@ -99,22 +99,25 @@ void ExpertAdvisorInfo::CreateNewMicroChannel() {
     double firstRangeTofindSecondRef[2];
     double secondRangeTofindSecondRef[2];
     double out2[];
-    firstRangeTofindSecondRef[0] = microRef1 + minMicroChannelSize;
-    firstRangeTofindSecondRef[1] = microRef1 + maxMicroChannelSize;
+    firstRangeTofindSecondRef[1] = microRef1 + minMicroChannelSize;
+    firstRangeTofindSecondRef[0] = microRef1 + maxMicroChannelSize;
     secondRangeTofindSecondRef[0] = microRef1 - minMicroChannelSize;
     secondRangeTofindSecondRef[1] = microRef1 - maxMicroChannelSize;
     for (int i=0; i<ArraySize(out); i++)
     {
-        if(out[i] >= firstRangeTofindSecondRef[0] && out[i] <= firstRangeTofindSecondRef[1]){
+        if(out[i] >= firstRangeTofindSecondRef[1] && out[i] <= firstRangeTofindSecondRef[0]){
             ArrayResize(out2, ArraySize(out2) + 1);
             out2[ArraySize(out2) - 1] = out[i];
         }
-        else if(out[i] >= secondRangeTofindSecondRef[0] && out[i] <= secondRangeTofindSecondRef[1]){
+        else if(out[i] >= secondRangeTofindSecondRef[1] && out[i] <= secondRangeTofindSecondRef[0]){
             ArrayResize(out2, ArraySize(out2) + 1);
             out2[ArraySize(out2) - 1] = out[i];//now array out2 has the prices inside the ranges to find the sec microref
         }
     }
     indexCorrection = repeatedClosePrices-1-6;
+    
+    if(out2.Size() == 0){Alert("No ref prices for microChannel found! (ExpertAdvisor.mqh line 119)");}
+    
     leastDiff = out2[repeatedClosePrices-1-6] - out2[0];
     for (int i=1; i<ArraySize(out)-repeatedClosePrices-1-6; i++)
     {
