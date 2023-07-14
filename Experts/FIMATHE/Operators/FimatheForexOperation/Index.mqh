@@ -33,17 +33,17 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
     {
         recentPosition = true;
         if(
-            expertAdvisorInfo.takeProfitType = TakeProfitType(0) ||
-            expertAdvisorInfo.takeProfitType = TakeProfitType(1) && expertAdvisorInfo.stopPosition == 0 ||
-            expertAdvisorInfo.takeProfitType = TakeProfitType(2) && expertAdvisorInfo.stopPosition == 0 ||
-            expertAdvisorInfo.takeProfitType = TakeProfitType(3) && expertAdvisorInfo.stopPosition == 0 ||
-            expertAdvisorInfo.takeProfitType = TakeProfitType(4) && expertAdvisorInfo.stopPosition == 0 ||
+            (expertAdvisorInfo.takeProfitType == TakeProfitType(0)) ||
+            (expertAdvisorInfo.takeProfitType == TakeProfitType(1) && expertAdvisorInfo.stopPosition == 0) ||
+            (expertAdvisorInfo.takeProfitType == TakeProfitType(2) && expertAdvisorInfo.stopPosition == 0) ||
+            (expertAdvisorInfo.takeProfitType == TakeProfitType(3) && expertAdvisorInfo.stopPosition == 0) ||
+            (expertAdvisorInfo.takeProfitType == TakeProfitType(4) && expertAdvisorInfo.stopPosition == 0)
            )
         {ManageTrailingStop();}
 
     }else if(!PositionsTotal() && recentPosition == true){
         expertAdvisorInfo.stopPosition = 0;
-        expertAdvisorInfo.firstCdPastLine == false;
+        expertAdvisorInfo.firstCdPastLine = false;
         expertAdvisorInfo.VerifyToLockEntryPoint();
         riskManager.AnalizeResults(); //todo
         recentPosition = false;
@@ -64,7 +64,7 @@ void FimatheForexOperation::ManageTrailingStop(void) {
     PositionSelect(Symbol());
     if(PositionGetInteger(POSITION_TYPE) == 1)
     {
-        if(expertAdvisorInfo.GetLastClosePriceM15() > PositionGetDouble(POSITION_OPEN) + expertAdvisorInfo.microChannelSize 
+        if(expertAdvisorInfo.GetLastClosePriceM15() > PositionGetDouble(POSITION_PRICE_OPEN) + expertAdvisorInfo.microChannelSize 
         && expertAdvisorInfo.stopPosition == 0)
         {
             if(expertAdvisorInfo.firstCdPastLine == true)
@@ -72,7 +72,7 @@ void FimatheForexOperation::ManageTrailingStop(void) {
                 if (expertAdvisorInfo.GetLastClosePriceM15() > expertAdvisorInfo.firstCdPastLineClose)
                 {
                     expertAdvisorInfo.stopPosition = 1;
-                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_OPEN),0);
+                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
             }else{
@@ -96,7 +96,7 @@ void FimatheForexOperation::ManageTrailingStop(void) {
         }
     }else if(PositionGetInteger(POSITION_TYPE) == 2)
     {
-        if(expertAdvisorInfo.GetLastClosePriceM15() < PositionGetDouble(POSITION_OPEN) - expertAdvisorInfo.microChannelSize 
+        if(expertAdvisorInfo.GetLastClosePriceM15() < PositionGetDouble(POSITION_PRICE_OPEN) - expertAdvisorInfo.microChannelSize 
         && expertAdvisorInfo.stopPosition == 0)
         {
             if(expertAdvisorInfo.firstCdPastLine == true)
@@ -104,7 +104,7 @@ void FimatheForexOperation::ManageTrailingStop(void) {
                 if (expertAdvisorInfo.GetLastClosePriceM15() < expertAdvisorInfo.firstCdPastLineClose)
                 {
                     expertAdvisorInfo.stopPosition = 1;
-                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_OPEN),0);
+                    trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
             }else{
@@ -136,7 +136,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     }
     expertAdvisorInfo.TryToDefine1And4();
 
-    if(macroRef1-2*macroChannelSize > expertAdvisorInfo.entryPoint4)//break through above
+    if(expertAdvisorInfo.macroRef1-2*expertAdvisorInfo.macroChannelSize > expertAdvisorInfo.entryPoint4)//break through above
     {
         expertAdvisorInfo.entryPoint3 = expertAdvisorInfo.entryPoint1;
         expertAdvisorInfo.entryPoint4 = expertAdvisorInfo.entryPoint2;
@@ -146,7 +146,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
         else if(expertAdvisorInfo.recentOperationEntryPoint == "entryPoint4")
         {expertAdvisorInfo.recentOperationEntryPoint = "entryPoint2";}
     }
-    if(macroRef2+2*macroChannelSize < expertAdvisorInfo.entryPoint1)//break through bellow
+    if(expertAdvisorInfo.macroRef2+2*expertAdvisorInfo.macroChannelSize < expertAdvisorInfo.entryPoint1)//break through bellow
     {
         expertAdvisorInfo.entryPoint2 = expertAdvisorInfo.entryPoint4;
         expertAdvisorInfo.entryPoint1 = expertAdvisorInfo.entryPoint3;

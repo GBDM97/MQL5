@@ -21,7 +21,7 @@ public:
   double entryPoint2;
   double entryPoint3;
   double entryPoint4;
-  double recentOperationEntryPoint;
+  string recentOperationEntryPoint;
   double entryPointRefPrice;
 
   double GetLastClosePriceM15(void);
@@ -214,36 +214,36 @@ void ExpertAdvisorInfo::VerifyToLockEntryPoint(void) {
 }
 
 void ExpertAdvisorInfo::LockRecentOperationEntryPoint(void) {
-    if(recentOperationEntryPoint = "entryPoint1")
+    if(recentOperationEntryPoint == "entryPoint1")
         {entryPoint1 = -1;}
-    if(recentOperationEntryPoint = "entryPoint2")
+    if(recentOperationEntryPoint == "entryPoint2")
         {entryPoint2 = -1;}
-    if(recentOperationEntryPoint = "entryPoint3")
+    if(recentOperationEntryPoint == "entryPoint3")
         {entryPoint3 = -1;}
-    if(recentOperationEntryPoint = "entryPoint4")
+    if(recentOperationEntryPoint == "entryPoint4")
         {entryPoint4 = -1;}
 }
 
 void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
-    if(recentOperationEntryPoint = "entryPoint1")
+    if(recentOperationEntryPoint == "entryPoint1")
         {entryPoint1 = 0;}
-    if(recentOperationEntryPoint = "entryPoint2")
+    if(recentOperationEntryPoint == "entryPoint2")
         {entryPoint2 = 0;}
-    if(recentOperationEntryPoint = "entryPoint3")
+    if(recentOperationEntryPoint == "entryPoint3")
         {entryPoint3 = 0;}
-    if(recentOperationEntryPoint = "entryPoint4")
+    if(recentOperationEntryPoint == "entryPoint4")
         {entryPoint4 = 0;}
 }
 
 bool ExpertAdvisorInfo::PriceBellow50(void) {
-    if(recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2/2) ||
-       recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2/2))
+    if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2/2)) ||
+       (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2/2)))
         {return true;}
     else{return false;}
 }
 bool ExpertAdvisorInfo::PriceAbove50(void) {
-    if(recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2/2) ||
-       recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2/2))
+    if((recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2/2)) ||
+       (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2/2)))
         {return true;}
     else{return false;}
 }
