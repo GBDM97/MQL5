@@ -9,6 +9,9 @@ public:
   double channelDivider;
   bool firstCdPastLine;
   double firstCdPastLineClose;
+  bool upBreakThrough;
+  bool downBreakThrough;
+  
 
   double macroRef1;
   double macroRef2;
@@ -88,6 +91,7 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
     
     if(macroRef1 < close)
     {
+        upBreakThrough = true;
         while (macroRef1 < close)
         {macroRef1 += macroChannelSize;}
         macroRef2 = macroRef1 - macroChannelSize;
@@ -95,6 +99,7 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
 
     if(macroRef2 > close)
     {
+        downBreakThrough = true;
         while (macroRef2 > close)
         {macroRef2 -= macroChannelSize;}
         macroRef1 = macroRef2 + macroChannelSize;

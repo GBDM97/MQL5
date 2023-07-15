@@ -136,24 +136,26 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder(ExpertAdvisorInfo& ex) {
     
     ex.StopHere();
       
-    if(ex.macroRef1-(2*ex.macroChannelSize) > ex.entryPoint4)//break through above
+    if(ex.upBreakThrough == true)//break through above
     {
         ex.entryPoint3 = ex.entryPoint1;
         ex.entryPoint1 = 0;
         ex.entryPoint4 = ex.entryPoint2;
         ex.entryPoint2 = 0;
+        ex.upBreakThrough = false;
 
         if(ex.recentOperationEntryPoint == "entryPoint2")
         {ex.recentOperationEntryPoint = "entryPoint4";}
         else if(ex.recentOperationEntryPoint == "entryPoint4")
         {ex.recentOperationEntryPoint = "entryPoint2";}
     }
-    if(ex.macroRef2+2*ex.macroChannelSize < ex.entryPoint1)//break through bellow
+    if(ex.downBreakThrough == true)//break through bellow
     {
         ex.entryPoint2 = ex.entryPoint4;
         ex.entryPoint4 = 0;
         ex.entryPoint1 = ex.entryPoint3;
         ex.entryPoint3 = 0;
+        ex.downBreakThrough = false;
 
         if(ex.recentOperationEntryPoint == "entryPoint3")
         {ex.recentOperationEntryPoint = "entryPoint1";}
