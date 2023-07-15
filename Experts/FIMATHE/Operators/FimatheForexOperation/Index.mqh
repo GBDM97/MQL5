@@ -137,7 +137,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     }
     ex.TryToDefine1And4();
 
-    if(ex.macroRef1-2*ex.macroChannelSize > ex.entryPoint4)//break through above
+    if(ex.macroRef1-(2*ex.macroChannelSize) > ex.entryPoint4)//break through above
     {
         ex.entryPoint3 = ex.entryPoint1;
         ex.entryPoint4 = ex.entryPoint2;

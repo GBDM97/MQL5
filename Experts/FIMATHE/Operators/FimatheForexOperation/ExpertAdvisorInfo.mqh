@@ -175,7 +175,7 @@ void ExpertAdvisorInfo::TryToDefine1And4(void) {
     }
     if(entryPoint4 == 0) 
     {
-        entryPoint1 = microRef2;
+        entryPoint4 = microRef2;
 
         while (entryPoint4 > macroRef2 - microChannelSize*2)
         {entryPoint4 -= microChannelSize;}
