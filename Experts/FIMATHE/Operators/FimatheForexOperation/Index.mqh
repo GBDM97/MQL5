@@ -52,15 +52,15 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
         CheckWhereToOpenNextOrder(ex);
     }
 
-    if(ex.entryPoint1 != 0 || ex.entryPoint2 != 0 || 
-    ex.entryPoint3 != 0 || ex.entryPoint4 != 0){
+    if((ex.entryPoint1 != 0 && ex.entryPoint1 != -1) || (ex.entryPoint2 != 0 && ex.entryPoint2 != -1) || 
+    (ex.entryPoint3 != 0 && ex.entryPoint3 != -1) || (ex.entryPoint4 != 0 && ex.entryPoint4 != -1)){
         WaitForPositionEntryPoint(ex);
     }
 }
 
 void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
     PositionSelect(Symbol());
-    if(PositionGetInteger(POSITION_TYPE) == 1)
+    if(PositionGetInteger(POSITION_TYPE) == 0)
     {
         if(ex.GetLastClosePriceM15() > PositionGetDouble(POSITION_PRICE_OPEN) + ex.microChannelSize 
         && ex.stopPosition == 0)
@@ -92,7 +92,7 @@ void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
                 trade.PositionModify(Symbol(),PositionGetDouble(POSITION_SL)+ex.microChannelSize,0);
             }  
         }
-    }else if(PositionGetInteger(POSITION_TYPE) == 2)
+    }else if(PositionGetInteger(POSITION_TYPE) == 1)
     {
         if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_PRICE_OPEN) - ex.microChannelSize 
         && ex.stopPosition == 0)
@@ -162,7 +162,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder(ExpertAdvisorInfo& ex) {
         else if(ex.recentOperationEntryPoint == "entryPoint1")
         {ex.recentOperationEntryPoint = "entryPoint3";}
     }
-    if(ex.PriceBellow50()){
+    if(ex.PriceBelow50()){
         ex.UnlockEntryPoints();
     }
     if(ex.PriceAbove50()){

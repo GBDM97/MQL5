@@ -29,7 +29,7 @@ public:
 
   double GetLastClosePriceM15(void);
   double GetPositionEntryPrice(void);
-  bool PriceBellow50(void);
+  bool PriceBelow50(void);
   bool PriceAbove50(void);
   void CreateNewMicroChannel(void);
   void UpdateMicroChannel(void);
@@ -107,6 +107,9 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
 }
 
 void ExpertAdvisorInfo::UnlockEntryPoints(void) {
+    Print(GetLastClosePriceM15());
+    Print(PriceBelow50());
+    Print(PriceAbove50());
     if(entryPoint1 == -1){
         entryPoint1 = 0;
     }
@@ -122,7 +125,7 @@ void ExpertAdvisorInfo::UnlockEntryPoints(void) {
 }
 
 void ExpertAdvisorInfo::VerifyToLockEntryPoint(void) {
-    if(PriceBellow50())
+    if(PriceBelow50())
         {
             UndefineRecentOperationEntryPoint();
             TryToDefine1And4();
