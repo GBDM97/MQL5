@@ -161,7 +161,7 @@ void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
         {entryPoint4 = 0;}
 }
 
-bool ExpertAdvisorInfo::PriceBellow50(void) {
+bool ExpertAdvisorInfo::PriceBelow50(void) {
     if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2) ||
        (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2))
         {return true;}
