@@ -107,7 +107,7 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
 }
 
 void ExpertAdvisorInfo::UnlockEntryPoints(void) {
-    Print(GetLastClosePriceM15());
+    Print(GetLastClosePriceM15()); //todo stop here to test
     Print(PriceBelow50());
     Print(PriceAbove50());
     if(entryPoint1 == -1){
@@ -162,14 +162,14 @@ void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
 }
 
 bool ExpertAdvisorInfo::PriceBellow50(void) {
-    if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2/2)) ||
-       (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2/2)))
+    if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2) ||
+       (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2))
         {return true;}
     else{return false;}
 }
 bool ExpertAdvisorInfo::PriceAbove50(void) {
-    if((recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2/2)) ||
-       (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2/2)))
+    if((recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2) ||
+       (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2))
         {return true;}
     else{return false;}
 }
