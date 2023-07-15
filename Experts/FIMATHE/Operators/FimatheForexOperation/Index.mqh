@@ -10,23 +10,20 @@ TodayIsTheFirstWeekDay todayIsTheFirstWeekDay;
 
 class FimatheForexOperation {
 protected:
-    void ManageTrailingStop(void);
-    void CheckWhereToOpenNextOrder(void);
-    int TakeProfitTypeToNumber(void);
-    void WaitForPositionEntryPoint(void);
-    void UpdateMicroChannel(void);
-    ExpertAdvisorInfo ex;
+    void ManageTrailingStop(ExpertAdvisorInfo& ex);
+    void CheckWhereToOpenNextOrder(ExpertAdvisorInfo& ex);
+    int TakeProfitTypeToNumber(ExpertAdvisorInfo& ex);
+    void WaitForPositionEntryPoint(ExpertAdvisorInfo& ex);
+    void UpdateMicroChannel(ExpertAdvisorInfo& ex);
 
     bool recentPosition;
 public:
-    void Update(ExpertAdvisorInfo& paramExpertAdvisorInfo);
+    void Update(ExpertAdvisorInfo& ex);
 };
 
-void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
-    
-    ex = paramExpertAdvisorInfo;
+void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
 
-    UpdateMicroChannel();
+    UpdateMicroChannel(ex);
     if(ex.microRef1 == 0){return;}
     ex.UpdateMacroChannel();
     
@@ -40,7 +37,7 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
             (ex.takeProfitType == TakeProfitType(3) && ex.stopPosition == 0) ||
             (ex.takeProfitType == TakeProfitType(4) && ex.stopPosition == 0)
            )
-        {ManageTrailingStop();}
+        {ManageTrailingStop(ex);}
 
     }else if(!PositionsTotal() && recentPosition == true){
         ex.stopPosition = 0;
@@ -52,16 +49,16 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& paramExpertAdvisorInfo) {
 
     if(ex.entryPoint1 == 0 || ex.entryPoint2 == 0 || 
     ex.entryPoint3 == 0 || ex.entryPoint4 == 0){
-        CheckWhereToOpenNextOrder();
+        CheckWhereToOpenNextOrder(ex);
     }
 
     if(ex.entryPoint1 != 0 || ex.entryPoint2 != 0 || 
     ex.entryPoint3 != 0 || ex.entryPoint4 != 0){
-        WaitForPositionEntryPoint();
+        WaitForPositionEntryPoint(ex);
     }
 }
 
-void FimatheForexOperation::ManageTrailingStop(void) {
+void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
     PositionSelect(Symbol());
     if(PositionGetInteger(POSITION_TYPE) == 1)
     {
@@ -130,13 +127,15 @@ void FimatheForexOperation::ManageTrailingStop(void) {
     }
 }
 
-void FimatheForexOperation::CheckWhereToOpenNextOrder() {
+void FimatheForexOperation::CheckWhereToOpenNextOrder(ExpertAdvisorInfo& ex) {
     if(riskManager.AuthorizeOperations() == false)//todo wait for sunday, and other logics
     {
         return;
     }
     ex.TryToDefine1And4();
-
+    
+    ex.StopHere();
+      
     if(ex.macroRef1-(2*ex.macroChannelSize) > ex.entryPoint4)//break through above
     {
         ex.entryPoint3 = ex.entryPoint1;
@@ -165,14 +164,14 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder() {
     }
 }
 
-void FimatheForexOperation::UpdateMicroChannel(){
+void FimatheForexOperation::UpdateMicroChannel(ExpertAdvisorInfo& ex){
     if(todayIsTheFirstWeekDay.Verify() && StringSubstr(TimeToString(TimeCurrent()),11,2) == "06")
     {ex.CreateNewMicroChannel();}
     else if(ex.microRef1 != 0){ex.UpdateMicroChannel();}
     else{return;}
 }
 
-void FimatheForexOperation::WaitForPositionEntryPoint(){
+void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
     
     double close = ex.GetLastClosePriceM15();
     if(close > ex.entryPoint3 && ex.entryPoint3 != 0 && ex.entryPoint3 != -1 && PositionsTotal() == false)
@@ -181,7 +180,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
         trade.Buy(ex.volume,Symbol(),0.0,
         ex.microChannelSize*-ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
-        0.0 : ex.microChannelSize*TakeProfitTypeToNumber()*2),NULL);
+        0.0 : ex.microChannelSize*TakeProfitTypeToNumber(ex)*2),NULL);
     }
     if(close < ex.entryPoint2 && ex.entryPoint2 != 0 && ex.entryPoint2 != -1 && PositionsTotal() == false)
       {
@@ -189,11 +188,11 @@ void FimatheForexOperation::WaitForPositionEntryPoint(){
         trade.Sell(ex.volume,Symbol(),0.0,
         ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType == TakeProfitType(0) ? 
-        0.0 : ex.microChannelSize*-TakeProfitTypeToNumber()*2),NULL);
+        0.0 : ex.microChannelSize*-TakeProfitTypeToNumber(ex)*2),NULL);
       }   
 }
 
-int FimatheForexOperation::TakeProfitTypeToNumber() {
+int FimatheForexOperation::TakeProfitTypeToNumber(ExpertAdvisorInfo& ex) {
     if(ex.takeProfitType == TakeProfitType(1))
     {return 1;}
     if(ex.takeProfitType == TakeProfitType(2))

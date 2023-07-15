@@ -34,6 +34,7 @@ public:
   void UnlockEntryPoints(void);
   void VerifyToLockEntryPoint(void);
   void TryToDefine1And4(void);
+  void StopHere(void);
   
   ExpertAdvisorInfo() {
     stopPosition = 0; 
@@ -179,5 +180,14 @@ void ExpertAdvisorInfo::TryToDefine1And4(void) {
 
         while (entryPoint4 > macroRef2 - microChannelSize*2)
         {entryPoint4 -= microChannelSize;}
+    }
+}
+
+void ExpertAdvisorInfo::StopHere(void) {
+    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.12 06:59")
+    {
+    bool b;
+    b=1;
+    return;
     }
 }
