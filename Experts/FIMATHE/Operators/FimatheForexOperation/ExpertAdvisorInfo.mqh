@@ -162,15 +162,23 @@ void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
 }
 
 bool ExpertAdvisorInfo::PriceBelow50(void) {
-    if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2) ||
-       (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2))
-        {return true;}
+    if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2 &&
+        entryPoint1 != 0 && entryPoint1 != -1) ||
+       (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2 &&
+        entryPoint2 != 0 && entryPoint2 != -1))
+        {return true;
+        Print(GetLastClosePriceM15());
+        Print((macroRef1+macroRef2)/2);}
     else{return false;}
 }
 bool ExpertAdvisorInfo::PriceAbove50(void) {
-    if((recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2) ||
-       (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2))
-        {return true;}
+    if((recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2 &&
+        entryPoint3 != 0 && entryPoint3 != -1) ||
+       (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2) &&
+        entryPoint4 != 0 && entryPoint4 != -1)
+        {return true; 
+        Print(GetLastClosePriceM15());
+        Print((macroRef1+macroRef2)/2);}
     else{return false;}
 }
 

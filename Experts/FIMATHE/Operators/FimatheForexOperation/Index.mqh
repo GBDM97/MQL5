@@ -166,6 +166,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder(ExpertAdvisorInfo& ex) {
         ex.UnlockEntryPoints();
     }
     if(ex.PriceAbove50()){
+        Print(ex.PriceAbove50(), "chamaram esse unlock aqui nada a ver tio");
         ex.UnlockEntryPoints();
     }
 }
