@@ -178,19 +178,21 @@ void FimatheForexOperation::UpdateMicroChannel(ExpertAdvisorInfo& ex){
 void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
     
     double close = ex.GetLastClosePriceM15();
-    if(close > ex.entryPoint3 && ex.entryPoint3 != 0 && ex.entryPoint3 != -1 && PositionsTotal() == false)
+    if((close > ex.entryPoint3) && (ex.entryPoint3 != 0) && (ex.entryPoint3 != -1) && (PositionsTotal() == false))
     {
         ex.entryPointRefPrice = ex.entryPoint3;
+        ex.recentOperationEntryPoint = "entryPoint3";
         trade.Buy(ex.volume,Symbol(),0.0,
-        ex.microChannelSize*-ex.stopLossMultiplier,
+        ex.microChannelSize*-ex.stopLossMultiplier-ex.entryPointRefPrice,
         (ex.takeProfitType==TakeProfitType(0) ? 
         0.0 : ex.microChannelSize*TakeProfitTypeToNumber(ex)*2),NULL);
     }
-    if(close < ex.entryPoint2 && ex.entryPoint2 != 0 && ex.entryPoint2 != -1 && PositionsTotal() == false)
+    if((close < ex.entryPoint2) && (ex.entryPoint2 != 0) && (ex.entryPoint2 != -1) && (PositionsTotal() == false))
       {
         ex.entryPointRefPrice = ex.entryPoint2;
+        ex.recentOperationEntryPoint = "entryPoint2";
         trade.Sell(ex.volume,Symbol(),0.0,
-        ex.microChannelSize*ex.stopLossMultiplier,
+        ex.microChannelSize*ex.stopLossMultiplier+ex.entryPointRefPrice,
         (ex.takeProfitType == TakeProfitType(0) ? 
         0.0 : ex.microChannelSize*-TakeProfitTypeToNumber(ex)*2),NULL);
       }   
