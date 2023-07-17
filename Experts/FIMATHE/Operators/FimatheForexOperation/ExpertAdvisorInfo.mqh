@@ -205,7 +205,7 @@ void ExpertAdvisorInfo::TryToDefine1And4(void) {
 }
 
 void ExpertAdvisorInfo::StopHere(void) {
-    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.16 12:00")
+    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.19 13:00")
     {
     bool b;
     b=1;
