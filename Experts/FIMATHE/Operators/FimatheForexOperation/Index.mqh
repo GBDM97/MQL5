@@ -196,7 +196,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
         ex.entryPointRefPrice = ex.entryPoint3;
         ex.recentOperationEntryPoint = "entryPoint3";
         trade.Buy(ex.volume,Symbol(),0.0,
-        ex.microChannelSize*-ex.stopLossMultiplier-ex.entryPointRefPrice,
+        ex.entryPointRefPrice-ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
         0.0 : ex.microChannelSize*TakeProfitTypeToNumber(ex)*2),NULL);
     }
