@@ -128,7 +128,7 @@ void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
              ex.takeProfitType == TakeProfitType(0))
             {
                     ex.stopPosition = 2;
-                    trade.PositionModify(PositionGetInteger(POSITION_TICKET),MathRound(0.75*ex.microChannelSize + ex.entryPointRefPrice),0);
+                    trade.PositionModify(PositionGetInteger(POSITION_TICKET),0.75*ex.microChannelSize + ex.entryPointRefPrice,0);
 
             }else if(ex.GetLastClosePriceM15() > PositionGetDouble(POSITION_SL) + 
             (2.25*ex.microChannelSize) && ex.stopPosition == 2 &&
@@ -159,7 +159,7 @@ void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
              ex.takeProfitType == TakeProfitType(0))
             {
                     ex.stopPosition = 2;
-                    trade.PositionModify(PositionGetInteger(POSITION_TICKET),MathRound(ex.entryPointRefPrice - 0.75*ex.microChannelSize),0);
+                    trade.PositionModify(PositionGetInteger(POSITION_TICKET),ex.entryPointRefPrice - 0.75*ex.microChannelSize,0);
 
             }else if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_SL) - 
             (2.25*ex.microChannelSize) && ex.stopPosition == 2 &&
