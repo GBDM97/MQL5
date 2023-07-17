@@ -108,17 +108,18 @@ void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
     if(PositionGetInteger(POSITION_TYPE) == 0)
     {
         if(ex.GetLastClosePriceM15() > PositionGetDouble(POSITION_PRICE_OPEN) + ex.microChannelSize 
-        && ex.stopPosition == 0)
+        )
         {
-            if(ex.firstCdPastLine == true)
+            if(ex.firstCdPastLine == true && ex.stopPosition == 0)
             {
                 if (ex.GetLastClosePriceM15() > ex.firstCdPastLineClose)
                 {
+                    Print("esse é o preço de entrada= ",PositionGetDouble(POSITION_PRICE_OPEN));
                     ex.stopPosition = 1;
                     trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
-            }else{
+            }else if(ex.stopPosition == 0){
                 ex.firstCdPastLine = true;
                 ex.firstCdPastLineClose = ex.GetLastClosePriceM15();
             }
@@ -139,10 +140,9 @@ void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
         }
     }else if(PositionGetInteger(POSITION_TYPE) == 1)
     {
-        if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_PRICE_OPEN) - ex.microChannelSize 
-        && ex.stopPosition == 0)
+        if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_PRICE_OPEN) - ex.microChannelSize)
         {
-            if(ex.firstCdPastLine == true)
+            if(ex.firstCdPastLine == true && ex.stopPosition == 0)
             {
                 if (ex.GetLastClosePriceM15() < ex.firstCdPastLineClose)
                 {
@@ -150,7 +150,7 @@ void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
                     trade.PositionModify(Symbol(),PositionGetDouble(POSITION_PRICE_OPEN),0);
                 }
 
-            }else{
+            }else if(ex.stopPosition == 0){
                 ex.firstCdPastLine = true;
                 ex.firstCdPastLineClose = ex.GetLastClosePriceM15();
             }

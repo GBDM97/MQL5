@@ -112,9 +112,6 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
 }
 
 void ExpertAdvisorInfo::UnlockEntryPoints(void) {
-    Print(GetLastClosePriceM15()); //todo stop here to test
-    Print(PriceBelow50());
-    Print(PriceAbove50());
     if(entryPoint1 == -1){
         entryPoint1 = 0;
     }
@@ -171,9 +168,7 @@ bool ExpertAdvisorInfo::PriceBelow50(void) {
         entryPoint1 != 0 && entryPoint1 != -1 && upBreakThrough == false && downBreakThrough == false) ||
        (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2 &&
         entryPoint2 != 0 && entryPoint2 != -1 && upBreakThrough == false && downBreakThrough == false))
-        {Print(GetLastClosePriceM15());
-        Print((macroRef1+macroRef2)/2);
-        return true;}
+        {return true;}
     else{return false;}
 }
 bool ExpertAdvisorInfo::PriceAbove50(void) {
@@ -181,9 +176,7 @@ bool ExpertAdvisorInfo::PriceAbove50(void) {
         entryPoint3 != 0 && entryPoint3 != -1 && upBreakThrough == false && downBreakThrough == false) ||
        (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2) &&
         entryPoint4 != 0 && entryPoint4 != -1 && upBreakThrough == false && downBreakThrough == false)
-        {Print(GetLastClosePriceM15());
-        Print((macroRef1+macroRef2)/2);
-        return true;} 
+        {return true;} 
     else{return false;}
 }
 
