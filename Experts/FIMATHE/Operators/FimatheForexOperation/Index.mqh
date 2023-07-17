@@ -23,6 +23,7 @@ public:
 
 void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
 
+   ex.StopHere();
     UpdateMicroChannel(ex);
     if(ex.microRef1 == 0){return;}
     ex.UpdateMacroChannel();
@@ -45,6 +46,50 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
         ex.VerifyToLockEntryPoint();
         riskManager.AnalizeResults(); //todo
         recentPosition = false;
+    }
+
+    if(ex.PriceBelow50()){
+        ex.UnlockEntryPoints();
+    }
+    if(ex.PriceAbove50()){
+        ex.UnlockEntryPoints();
+    }
+      
+    if(ex.upBreakThrough == true)//break through above
+    {
+        ex.entryPoint3 = ex.entryPoint1;
+        ex.entryPoint1 = 0;
+        ex.entryPoint4 = ex.entryPoint2;
+        ex.entryPoint2 = 0;
+        ex.upBreakThrough = false;
+
+        if(ex.recentOperationEntryPoint == "entryPoint1")
+        {ex.recentOperationEntryPoint = "entryPoint3";}
+        else if(ex.recentOperationEntryPoint == "entryPoint2")
+        {ex.recentOperationEntryPoint = "entryPoint4";}
+        else if(ex.recentOperationEntryPoint == "entryPoint3")
+        {ex.recentOperationEntryPoint = "entryPoint1";}
+        else if(ex.recentOperationEntryPoint == "entryPoint4")
+        {ex.recentOperationEntryPoint = "entryPoint2";}
+        
+    }
+    if(ex.downBreakThrough == true)//break through bellow
+    {
+        ex.entryPoint2 = ex.entryPoint4;
+        ex.entryPoint4 = 0;
+        ex.entryPoint1 = ex.entryPoint3;
+        ex.entryPoint3 = 0;
+        ex.downBreakThrough = false;
+
+        if(ex.recentOperationEntryPoint == "entryPoint1")
+        {ex.recentOperationEntryPoint = "entryPoint3";}
+        else if(ex.recentOperationEntryPoint == "entryPoint2")
+        {ex.recentOperationEntryPoint = "entryPoint4";}
+        else if(ex.recentOperationEntryPoint == "entryPoint3")
+        {ex.recentOperationEntryPoint = "entryPoint1";}
+        else if(ex.recentOperationEntryPoint == "entryPoint4")
+        {ex.recentOperationEntryPoint = "entryPoint2";}
+
     }
 
     if(ex.entryPoint1 == 0 || ex.entryPoint2 == 0 || 
@@ -133,42 +178,7 @@ void FimatheForexOperation::CheckWhereToOpenNextOrder(ExpertAdvisorInfo& ex) {
         return;
     }
     ex.TryToDefine1And4();
-    
-    ex.StopHere();
-      
-    if(ex.upBreakThrough == true)//break through above
-    {
-        ex.entryPoint3 = ex.entryPoint1;
-        ex.entryPoint1 = 0;
-        ex.entryPoint4 = ex.entryPoint2;
-        ex.entryPoint2 = 0;
-        ex.upBreakThrough = false;
 
-        if(ex.recentOperationEntryPoint == "entryPoint2")
-        {ex.recentOperationEntryPoint = "entryPoint4";}
-        else if(ex.recentOperationEntryPoint == "entryPoint4")
-        {ex.recentOperationEntryPoint = "entryPoint2";}
-    }
-    if(ex.downBreakThrough == true)//break through bellow
-    {
-        ex.entryPoint2 = ex.entryPoint4;
-        ex.entryPoint4 = 0;
-        ex.entryPoint1 = ex.entryPoint3;
-        ex.entryPoint3 = 0;
-        ex.downBreakThrough = false;
-
-        if(ex.recentOperationEntryPoint == "entryPoint3")
-        {ex.recentOperationEntryPoint = "entryPoint1";}
-        else if(ex.recentOperationEntryPoint == "entryPoint1")
-        {ex.recentOperationEntryPoint = "entryPoint3";}
-    }
-    if(ex.PriceBelow50()){
-        ex.UnlockEntryPoints();
-    }
-    if(ex.PriceAbove50()){
-        Print(ex.PriceAbove50(), "chamaram esse unlock aqui nada a ver tio");
-        ex.UnlockEntryPoints();
-    }
 }
 
 void FimatheForexOperation::UpdateMicroChannel(ExpertAdvisorInfo& ex){

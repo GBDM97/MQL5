@@ -11,8 +11,8 @@ public:
   double firstCdPastLineClose;
   bool upBreakThrough;
   bool downBreakThrough;
+  bool correctionOfFirstBreakThrough;
   
-
   double macroRef1;
   double macroRef2;
   double microRef1;
@@ -42,6 +42,7 @@ public:
   ExpertAdvisorInfo() {
     stopPosition = 0; 
     firstCdPastLine = false;
+    correctionOfFirstBreakThrough = true;
   }
 protected:
   double midValue;
@@ -91,7 +92,9 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
     
     if(macroRef1 < close)
     {
-        upBreakThrough = true;
+        if(correctionOfFirstBreakThrough == false)
+            {upBreakThrough = true;}
+        correctionOfFirstBreakThrough = false;
         while (macroRef1 < close)
         {macroRef1 += macroChannelSize;}
         macroRef2 = macroRef1 - macroChannelSize;
@@ -99,7 +102,9 @@ void ExpertAdvisorInfo::UpdateMacroChannel() {
 
     if(macroRef2 > close)
     {
-        downBreakThrough = true;
+        if(correctionOfFirstBreakThrough == false)
+            {downBreakThrough = true;}
+        correctionOfFirstBreakThrough = false;
         while (macroRef2 > close)
         {macroRef2 -= macroChannelSize;}
         macroRef1 = macroRef2 + macroChannelSize;
@@ -163,22 +168,22 @@ void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
 
 bool ExpertAdvisorInfo::PriceBelow50(void) {
     if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2 &&
-        entryPoint1 != 0 && entryPoint1 != -1) ||
+        entryPoint1 != 0 && entryPoint1 != -1 && upBreakThrough == false && downBreakThrough == false) ||
        (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2 &&
-        entryPoint2 != 0 && entryPoint2 != -1))
-        {return true;
-        Print(GetLastClosePriceM15());
-        Print((macroRef1+macroRef2)/2);}
+        entryPoint2 != 0 && entryPoint2 != -1 && upBreakThrough == false && downBreakThrough == false))
+        {Print(GetLastClosePriceM15());
+        Print((macroRef1+macroRef2)/2);
+        return true;}
     else{return false;}
 }
 bool ExpertAdvisorInfo::PriceAbove50(void) {
     if((recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2 &&
-        entryPoint3 != 0 && entryPoint3 != -1) ||
+        entryPoint3 != 0 && entryPoint3 != -1 && upBreakThrough == false && downBreakThrough == false) ||
        (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2) &&
-        entryPoint4 != 0 && entryPoint4 != -1)
-        {return true; 
-        Print(GetLastClosePriceM15());
-        Print((macroRef1+macroRef2)/2);}
+        entryPoint4 != 0 && entryPoint4 != -1 && upBreakThrough == false && downBreakThrough == false)
+        {Print(GetLastClosePriceM15());
+        Print((macroRef1+macroRef2)/2);
+        return true;} 
     else{return false;}
 }
 
@@ -200,7 +205,7 @@ void ExpertAdvisorInfo::TryToDefine1And4(void) {
 }
 
 void ExpertAdvisorInfo::StopHere(void) {
-    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.12 06:59")
+    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.16 12:00")
     {
     bool b;
     b=1;
