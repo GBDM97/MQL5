@@ -39,7 +39,20 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
             (ex.takeProfitType == TakeProfitType(4) && ex.stopPosition == 0)
            )
         {ManageTrailingStop(ex);}
-
+        //(ex.takeProfitType == TakeProfitType(0) ? 
+        //0.0 : ex.entryPointRefPrice-(ex.microChannelSize*-2*TakeProfitTypeToNumber(ex)))
+        PositionSelect(Symbol());
+        if(PositionGetDouble(POSITION_PROFIT) == NULL)
+        {
+            if(PositionGetInteger(POSITION_TYPE) == 0)
+            {
+                
+            }
+            if(PositionGetInteger(POSITION_TYPE) == 1)
+            {
+                
+            }
+        }
     }else if(!PositionsTotal() && recentPosition == true){
         ex.stopPosition = 0;
         ex.firstCdPastLine = false;
@@ -197,7 +210,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
         trade.Buy(ex.volume,Symbol(),0.0,
         ex.entryPointRefPrice-ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
-        0.0 : ex.microChannelSize*TakeProfitTypeToNumber(ex)*2),NULL);
+        0.0 : ex.entryPointRefPrice+(ex.microChannelSize*2*TakeProfitTypeToNumber(ex))),NULL);
     }
     if((close < ex.entryPoint2) && (ex.entryPoint2 != 0) && (ex.entryPoint2 != -1) && (PositionsTotal() == false))
       {
@@ -205,8 +218,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
         ex.recentOperationEntryPoint = "entryPoint2";
         trade.Sell(ex.volume,Symbol(),0.0,
         ex.microChannelSize*ex.stopLossMultiplier+ex.entryPointRefPrice,
-        (ex.takeProfitType == TakeProfitType(0) ? 
-        0.0 : ex.microChannelSize*-TakeProfitTypeToNumber(ex)*2),NULL);
+        0.0,NULL);
       }   
 }
 
