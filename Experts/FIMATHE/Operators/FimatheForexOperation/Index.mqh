@@ -39,20 +39,19 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
             (ex.takeProfitType == TakeProfitType(4) && ex.stopPosition == 0)
            )
         {ManageTrailingStop(ex);}
-        //(ex.takeProfitType == TakeProfitType(0) ? 
-        //0.0 : ex.entryPointRefPrice-(ex.microChannelSize*-2*TakeProfitTypeToNumber(ex)))
+    
         PositionSelect(Symbol());
-        if(PositionGetDouble(POSITION_PROFIT) == NULL)
+        if(PositionGetDouble(POSITION_TP) == NULL)
         {
             if(PositionGetInteger(POSITION_TYPE) == 0)//buy
             {
-                trade.PositionModify(PositionGetInteger(POSITION_TICKET),
-                PositionGetDouble(POSITION_PRICE_OPEN)+(ex.microChannelSize*2*TakeProfitTypeToNumber(ex)),0);
+                trade.PositionModify(PositionGetInteger(POSITION_TICKET),PositionGetDouble(POSITION_SL),
+                PositionGetDouble(POSITION_PRICE_OPEN)+(ex.microChannelSize*2*TakeProfitTypeToNumber(ex)));
             }
             if(PositionGetInteger(POSITION_TYPE) == 1)//sell
             {
-                trade.PositionModify(PositionGetInteger(POSITION_TICKET),
-                PositionGetDouble(POSITION_PRICE_OPEN)-(ex.microChannelSize*-2*TakeProfitTypeToNumber(ex)),0);
+                trade.PositionModify(PositionGetInteger(POSITION_TICKET),PositionGetDouble(POSITION_SL),
+                PositionGetDouble(POSITION_PRICE_OPEN)-(ex.microChannelSize*2*TakeProfitTypeToNumber(ex)));
             }
         }
     }else if(!PositionsTotal() && recentPosition == true){
