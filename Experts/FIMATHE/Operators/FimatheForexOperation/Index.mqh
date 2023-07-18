@@ -44,13 +44,15 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
         PositionSelect(Symbol());
         if(PositionGetDouble(POSITION_PROFIT) == NULL)
         {
-            if(PositionGetInteger(POSITION_TYPE) == 0)
+            if(PositionGetInteger(POSITION_TYPE) == 0)//buy
             {
-                
+                trade.PositionModify(PositionGetInteger(POSITION_TICKET),
+                PositionGetDouble(POSITION_PRICE_OPEN)+(ex.microChannelSize*2*TakeProfitTypeToNumber(ex)),0);
             }
-            if(PositionGetInteger(POSITION_TYPE) == 1)
+            if(PositionGetInteger(POSITION_TYPE) == 1)//sell
             {
-                
+                trade.PositionModify(PositionGetInteger(POSITION_TICKET),
+                PositionGetDouble(POSITION_PRICE_OPEN)-(ex.microChannelSize*-2*TakeProfitTypeToNumber(ex)),0);
             }
         }
     }else if(!PositionsTotal() && recentPosition == true){
@@ -118,7 +120,7 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
 
 void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
     PositionSelect(Symbol());
-    if(PositionGetInteger(POSITION_TYPE) == 0)
+    if(PositionGetInteger(POSITION_TYPE) == 0) //buy
     {
         if(ex.GetLastClosePriceM15() > PositionGetDouble(POSITION_PRICE_OPEN) + ex.microChannelSize 
         )
@@ -150,7 +152,7 @@ void FimatheForexOperation::ManageTrailingStop(ExpertAdvisorInfo& ex) {
                 trade.PositionModify(PositionGetInteger(POSITION_TICKET),PositionGetDouble(POSITION_SL)+ex.microChannelSize,0);
             }  
         }
-    }else if(PositionGetInteger(POSITION_TYPE) == 1)
+    }else if(PositionGetInteger(POSITION_TYPE) == 1) //sell
     {
         if(ex.GetLastClosePriceM15() < PositionGetDouble(POSITION_PRICE_OPEN) - ex.microChannelSize)
         {
