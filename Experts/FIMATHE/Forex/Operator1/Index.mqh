@@ -41,7 +41,7 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
         {ManageTrailingStop(ex);}
     
         PositionSelect(Symbol());
-        if(PositionGetDouble(POSITION_TP) == NULL)
+        if(PositionGetDouble(POSITION_TP) == NULL && ex.takeProfitType != TakeProfitType(0))
         {
             if(PositionGetInteger(POSITION_TYPE) == 0)//buy
             {

@@ -1,6 +1,6 @@
-#include "../Operators/FimatheForexOperation/Index.mqh"
-#include "../Operators/FimatheForexOperation/ExpertAdvisorInfo.mqh"
-#include "../Operators/FimatheForexOperation/Enums/TakeProfitType.mqh"
+#include "Index.mqh"
+#include "ExpertAdvisorInfo.mqh"
+#include "./Enums/TakeProfitType.mqh"
 
 FimatheForexOperation fimatheForexOperation;
 ExpertAdvisorInfo expertAdvisorInfo;
