@@ -166,17 +166,17 @@ void ExpertAdvisorInfo::UndefineRecentOperationEntryPoint(void) {
 
 bool ExpertAdvisorInfo::PriceBelow50(void) {
     if((recentOperationEntryPoint == "entryPoint1" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2 &&
-        entryPoint1 != 0 && entryPoint1 != -1 && upBreakThrough == false && downBreakThrough == false) ||
+        entryPoint1 != 0 && upBreakThrough == false && downBreakThrough == false) ||
        (recentOperationEntryPoint == "entryPoint2" && GetLastClosePriceM15()<(macroRef1+macroRef2)/2 &&
-        entryPoint2 != 0 && entryPoint2 != -1 && upBreakThrough == false && downBreakThrough == false))
+        entryPoint2 != 0 && upBreakThrough == false && downBreakThrough == false))
         {return true;}
     else{return false;}
 }
 bool ExpertAdvisorInfo::PriceAbove50(void) {
     if((recentOperationEntryPoint == "entryPoint3" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2 &&
-        entryPoint3 != 0 && entryPoint3 != -1 && upBreakThrough == false && downBreakThrough == false) ||
+        entryPoint3 != 0 && upBreakThrough == false && downBreakThrough == false) ||
        (recentOperationEntryPoint == "entryPoint4" && GetLastClosePriceM15()>(macroRef1+macroRef2)/2) &&
-        entryPoint4 != 0 && entryPoint4 != -1 && upBreakThrough == false && downBreakThrough == false)
+        entryPoint4 != 0 && upBreakThrough == false && downBreakThrough == false)
         {return true;} 
     else{return false;}
 }
@@ -184,14 +184,14 @@ bool ExpertAdvisorInfo::PriceAbove50(void) {
 void ExpertAdvisorInfo::TryToDefine1And4(void) {
     if(entryPoint1 == 0) 
     {
-        entryPoint1 = microRef1;
+        entryPoint1 = macroRef1 + 2*microChannelSize;;
 
         while (entryPoint1 < macroRef1 + microChannelSize*2)
         {entryPoint1 += microChannelSize;}
     }
     if(entryPoint4 == 0) 
     {
-        entryPoint4 = microRef2;
+        entryPoint4 = macroRef2 - 2*microChannelSize;
 
         while (entryPoint4 > macroRef2 - microChannelSize*2)
         {entryPoint4 -= microChannelSize;}
@@ -199,7 +199,7 @@ void ExpertAdvisorInfo::TryToDefine1And4(void) {
 }
 
 void ExpertAdvisorInfo::StopHere(void) {
-    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.16 12:15")//todo "12.22 00:00" nao ta entrando no ep1
+    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "01.18 01:15")//todo mm.dd hh:mm
     {
     bool b;
     b=1;

@@ -23,7 +23,7 @@ public:
 
 void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
 
-   ex.StopHere();
+    ex.StopHere();
     UpdateMicroChannel(ex);
     if(ex.microRef1 == 0){return;}
     ex.UpdateMacroChannel();
@@ -208,10 +208,9 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
     {
         ex.entryPointRefPrice = ex.entryPoint3;
         ex.recentOperationEntryPoint = "entryPoint3";
-        ex.StopHere();
         FileWrite(ex.fileHandle,TimeCurrent()+","+ex.entryPointRefPrice+","+"buy"); //The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
         trade.Buy(ex.volume,Symbol(),0.0,
-        ex.entryPointRefPrice-ex.microChannelSize*ex.stopLossMultiplier,
+        ex.GetLastClosePriceM15()-ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
         0.0 : ex.entryPointRefPrice+(ex.microChannelSize*2*TakeProfitTypeToNumber(ex))),NULL);
     }
@@ -221,7 +220,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
         ex.recentOperationEntryPoint = "entryPoint2";
         FileWrite(ex.fileHandle,TimeCurrent()+","+ex.entryPointRefPrice+","+"sell");
         trade.Sell(ex.volume,Symbol(),0.0,
-        ex.microChannelSize*ex.stopLossMultiplier+ex.entryPointRefPrice,
+        ex.microChannelSize*ex.stopLossMultiplier+ex.GetLastClosePriceM15(),
         0.0,NULL);
       }   
 }
