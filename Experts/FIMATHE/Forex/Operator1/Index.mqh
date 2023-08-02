@@ -208,6 +208,8 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
     {
         ex.entryPointRefPrice = ex.entryPoint3;
         ex.recentOperationEntryPoint = "entryPoint3";
+        ex.StopHere();
+        FileWrite(ex.fileHandle,TimeCurrent()+","+ex.entryPointRefPrice+","+"buy"); //The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
         trade.Buy(ex.volume,Symbol(),0.0,
         ex.entryPointRefPrice-ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
@@ -217,6 +219,7 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
       {
         ex.entryPointRefPrice = ex.entryPoint2;
         ex.recentOperationEntryPoint = "entryPoint2";
+        FileWrite(ex.fileHandle,TimeCurrent()+","+ex.entryPointRefPrice+","+"sell");
         trade.Sell(ex.volume,Symbol(),0.0,
         ex.microChannelSize*ex.stopLossMultiplier+ex.entryPointRefPrice,
         0.0,NULL);

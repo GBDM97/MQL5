@@ -11,6 +11,7 @@ input double stopLossMultiplier = 2.25;
 input double macroInitRef1;
 input double macroInitRef2;
 input double channelDivider = 8;
+int fileHandle = FileOpen("Forex_Entrypoints.csv",FILE_CSV|FILE_READ|FILE_WRITE|FILE_ANSI|FILE_COMMON,",");;
 
 
 int OnInit()
@@ -21,7 +22,9 @@ int OnInit()
     expertAdvisorInfo.macroRef1 = macroInitRef1;
     expertAdvisorInfo.macroRef2 = macroInitRef2;
     expertAdvisorInfo.channelDivider = channelDivider;
-
+    expertAdvisorInfo.fileHandle = fileHandle;
+    FileWrite(fileHandle,"<DATE> <ENTRYPOINT_PRICE> <SIDE>"); //The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
+    
     if(macroInitRef1>macroInitRef2) //refs validation
     {
         return(INIT_SUCCEEDED);
@@ -35,3 +38,8 @@ void OnTick()
   { 
    fimatheForexOperation.Update(expertAdvisorInfo);
   }
+
+void OnDeInit() 
+{
+    FileClose(fileHandle);
+}

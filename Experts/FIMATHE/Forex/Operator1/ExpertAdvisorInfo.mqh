@@ -2,6 +2,7 @@
 
 class ExpertAdvisorInfo {
 public:
+  int fileHandle;
   double volume;
   TakeProfitType takeProfitType;
   double stopLossMultiplier;
@@ -198,7 +199,7 @@ void ExpertAdvisorInfo::TryToDefine1And4(void) {
 }
 
 void ExpertAdvisorInfo::StopHere(void) {
-    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.19 13:00")
+    if(StringSubstr(TimeToString(TimeCurrent()),5,11) == "06.16 12:15")//todo "12.22 00:00" nao ta entrando no ep1
     {
     bool b;
     b=1;
