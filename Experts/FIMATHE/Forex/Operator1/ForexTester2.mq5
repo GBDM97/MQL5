@@ -19,7 +19,7 @@ int OnInit()
     FileDelete("Forex_Entrypoints.csv",FILE_COMMON);
     fileHandle = FileOpen("Forex_Entrypoints.csv",FILE_CSV|FILE_READ|FILE_WRITE|FILE_ANSI|FILE_COMMON,",");
     FileWrite(fileHandle,"<DATE> <ENTRYPOINT_PRICE> <SIDE>"); //The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
-    
+
     expertAdvisorInfo.volume = volumeOfOperations;
     expertAdvisorInfo.takeProfitType = tpType;
     expertAdvisorInfo.stopLossMultiplier = stopLossMultiplier;
@@ -42,7 +42,7 @@ void OnTick()
    fimatheForexOperation.Update(expertAdvisorInfo);
   }
 
-void OnDeInit() 
+void OnDeInit(const int reason) 
 {
     FileClose(fileHandle);
 }
