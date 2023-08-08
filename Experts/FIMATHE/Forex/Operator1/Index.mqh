@@ -17,8 +17,12 @@ protected:
     void UpdateMicroChannel(ExpertAdvisorInfo& ex);
 
     bool recentPosition;
+    bool firstRunInsidePosition;
 public:
     void Update(ExpertAdvisorInfo& ex);
+    FimatheForexOperation () {
+        firstRunInsidePosition=true;
+    }
 };
 
 void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
@@ -54,12 +58,24 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
                 PositionGetDouble(POSITION_PRICE_OPEN)-(ex.microChannelSize*2*TakeProfitTypeToNumber(ex)));
             }
         }
+        if(PositionGetInteger(POSITION_TYPE) == 0 && firstRunInsidePosition == true)//buy
+        {
+            FileWrite(ex.fileHandle,TimeCurrent()+","+PositionGetDouble(POSITION_PRICE_OPEN)+","+"buy");//The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
+            firstRunInsidePosition = false;
+        }
+        if(PositionGetInteger(POSITION_TYPE) == 1 && firstRunInsidePosition == true)//sell
+        {
+            FileWrite(ex.fileHandle,TimeCurrent()+","+PositionGetDouble(POSITION_PRICE_OPEN)+","+"sell");
+            firstRunInsidePosition = false;
+        }
+        
     }else if(!PositionsTotal() && recentPosition == true){
         ex.stopPosition = 0;
         ex.firstCdPastLine = false;
         ex.VerifyToLockEntryPoint();
         riskManager.AnalizeResults(); //todo
         recentPosition = false;
+        firstRunInsidePosition = true;
     }
 
     if(ex.PriceBelow50()){
@@ -208,7 +224,6 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
     {
         ex.entryPointRefPrice = ex.entryPoint3;
         ex.recentOperationEntryPoint = "entryPoint3";
-        FileWrite(ex.fileHandle,TimeCurrent()+","+ex.entryPointRefPrice+","+"buy"); //The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
         trade.Buy(ex.volume,Symbol(),0.0,
         ex.GetLastClosePriceM15()-ex.microChannelSize*ex.stopLossMultiplier,
         (ex.takeProfitType==TakeProfitType(0) ? 
@@ -218,7 +233,6 @@ void FimatheForexOperation::WaitForPositionEntryPoint(ExpertAdvisorInfo& ex){
       {
         ex.entryPointRefPrice = ex.entryPoint2;
         ex.recentOperationEntryPoint = "entryPoint2";
-        FileWrite(ex.fileHandle,TimeCurrent()+","+ex.entryPointRefPrice+","+"sell");
         trade.Sell(ex.volume,Symbol(),0.0,
         ex.microChannelSize*ex.stopLossMultiplier+ex.GetLastClosePriceM15(),
         0.0,NULL);
