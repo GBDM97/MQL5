@@ -60,12 +60,12 @@ void FimatheForexOperation::Update(ExpertAdvisorInfo& ex) {
         }
         if(PositionGetInteger(POSITION_TYPE) == 0 && firstRunInsidePosition == true)//buy
         {
-            FileWrite(ex.fileHandle,TimeCurrent()+","+PositionGetDouble(POSITION_PRICE_OPEN)+","+"buy");//The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
+            FileWrite(ex.fileHandle,TimeCurrent()+","+NormalizeDouble(ex.entryPointRefPrice,6)+","+PositionGetDouble(POSITION_PRICE_OPEN)+","+"buy");//The files go to "Users\AppData\Roaming\MetaQuotes\Terminal\Common\Files"
             firstRunInsidePosition = false;
         }
         if(PositionGetInteger(POSITION_TYPE) == 1 && firstRunInsidePosition == true)//sell
         {
-            FileWrite(ex.fileHandle,TimeCurrent()+","+PositionGetDouble(POSITION_PRICE_OPEN)+","+"sell");
+            FileWrite(ex.fileHandle,TimeCurrent()+","+NormalizeDouble(ex.entryPointRefPrice,6)+","+PositionGetDouble(POSITION_PRICE_OPEN)+","+"sell");
             firstRunInsidePosition = false;
         }
         

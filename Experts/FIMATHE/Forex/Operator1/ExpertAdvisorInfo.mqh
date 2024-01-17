@@ -68,6 +68,7 @@ void ExpertAdvisorInfo::CreateNewMicroChannel() {
 void ExpertAdvisorInfo::UpdateMicroChannel() {
 
     microChannelSize = microRef1-microRef2;
+    
     double close = GetLastClosePriceM15();
 
     if(microRef1 < close)
@@ -83,8 +84,6 @@ void ExpertAdvisorInfo::UpdateMicroChannel() {
         {microRef2 -= microChannelSize;}
         microRef1 = microRef2 + microChannelSize;
     }
-
-    microChannelSize = microRef1-microRef2;
 }
 
 void ExpertAdvisorInfo::UpdateMacroChannel() {
